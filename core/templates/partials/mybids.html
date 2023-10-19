@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="fluid-container col-md-8">
+    <div class="table-responsive">
+        <div class="panel-header">
+            <h4 class="label label-default">Wins</h4>
+          </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item Name</th>
+              <th>Auction</th>
+              <th>Current Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if bids %}
+                {% for bid in bids  %}
+                    <tr>
+                        <td>{{bid.product.pk}}</td>
+                        <td>{{bid.product.name}}</td>
+                        <td>{{bid.product.slot}}</td>
+                        <td>{{bid.product.price}}</td>
+                        <td><a href="{% url "checkout" pk=bid.product.pk%}" class=" btn btn-success btn-sm">payment</a></td>
+                        {% if sold %}
+                        <td><button hx-post="" class="btn btn-info btn-sm">Print Reciept</button></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            
+            
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class="table-responsive">
+        <div class="panel-header">
+            <h4 class="label label-default">Pre Bids</h4>
+          </div>
+        <table class="table">
+          <thead>
+            <tr>
+                <th>#</th>
+                <th>Item Name</th>
+                <th>Auction</th>
+                <th>Bid Price</th>
+                <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if pre_bids %}
+                {% for bid in pre_bids  %}
+                    <tr>
+                        <td>1,001</td>
+                        <td>Lorem</td>
+                        <td>ipsum</td>
+                        <td>dolor</td>
+                        <td>sit</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            
+            
+          </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class="table-responsive">
+        <div class="panel-header">
+          <h4 class="label label-default">Delivery Prices</h4>
+        </div>
+        <table class="table">
+          <tbody>
+            {% for item in delivery %}
+            <tr>
+              <td>{{item.frm}}</td>
+              <td>{{item.to}}</td>
+              <td>${{item.price}} USD</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+</div>
+{% endblock main %}

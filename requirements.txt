@@ -1,0 +1,17 @@
+APScheduler==3.10.3
+asgiref==3.7.2
+certifi==2023.7.22
+charset-normalizer==3.3.0
+Django==4.2.4
+django-apscheduler==0.6.2
+django-environ==0.10.0
+idna==3.4
+paynow==1.0.4
+Pillow==10.0.0
+psycopg2-binary==2.9.7
+pytz==2023.3
+requests==2.31.0
+six==1.16.0
+sqlparse==0.4.4
+tzlocal==5.0.1
+urllib3==2.0.5

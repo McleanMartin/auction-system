@@ -1,0 +1,15 @@
+<div class="list-group">
+    
+    {% if all_bids %}
+        {% for bid in all_bids  %}
+            <a  class="list-group-item ">
+                <img src="{{bid.product.image.url}}" height="50" width="70" />
+                <small>{{bid.product.name}}</small>
+                <span class="label label-default">${{bid.bid_price}}</span>
+                
+            </a>
+        {% endfor %}
+    {% else %}
+        <a  class="list-group-item text-center">refreshing live biddings .......</a>
+    {% endif %}
+</div>

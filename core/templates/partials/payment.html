@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="fluid-container col-md-8">
+      {% comment %} {% if product.sold != True %}
+        <div class="container bcontent col-md-10" style="margin-top: 20px;">
+          <div class="card col-sm-10" style="width: 800px;">
+            <div class="row no-gutters " >
+              <div class="col-sm-5 ">
+                <img class="card-img" width="300" height="200" src="{{product.image.url}}" alt="No Image">
+              </div>
+              <div class="col-sm-7">
+                <form method="post" action="">
+                  {% csrf_token %}
+                  <div class="card-body col-md-8">
+                    <h3 class="card-title"><strong>{{product.name}}</strong></h3>
+                    <h3 id="price" class="card-title">Price: ${{price}}</h3><br>
+                  
+                    <select class="form-control" style="margin-bottom:10px;">
+                      {% for route in routes  %}
+                      {% if route.frm == route.to %}
+                      <option hx-get="{% url "checkout" pk=product.pk%}"  value="{{route.price}}">{{route.to}}</option>
+                      {% else %}
+                      <option hx-get="{% url "checkout" pk=product.pk%}">{{route.frm}}-{{route.to}}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                    <div class="col" style="margin-bottom:10px;">
+                      <label for="eco" >Ecocash</label>
+                      <input checked  type="radio" name="cell" id="eco">    
+                      <label for="one" >OneMoney</label>
+                      <input  type="radio" name="cell" id="one">  
+                    </div>
+                      
+                    <label for="inputUser" class="sr-only">Phonenumber</label>
+                    <input style="margin-bottom:10px;" type="text" name="cell" id="inputUser" class="form-control" placeholder="phone number" required autofocus>    
+                    <button class="btn btn-md btn-success btn-block" type="submit">Checkout</button>
+
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %} {% endcomment %}
+      <form class="needs-validation">
+      <div class="row g-5">
+        <div class="col-md-5 ">
+          <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div class="">
+                <img class="" width="210" height="150" src="{{product.image.url}}" alt="No Image">
+              </div>
+              <div>
+                <h6 class="label label-default"><strong>{{product.name}}</strong></h6>
+              </div>
+              <span class="text-muted">${{product.price}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Total Cost (USD)</span>
+              {% include "partials/price.html" %}
+            </li>
+          </ul>
+         
+        </div>
+        <div class="col-md-7 ">
+          
+            <div class="row g-4">
+              <div class="col-sm-6">
+                <label for="firstName" class="form-label">First name</label>
+                <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+              </div>
+  
+              <div class="col-sm-6">
+                <label for="lastName" class="form-label">Last name</label>
+                <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+              </div>
+
+              <div class="col-sm-12">
+                <label for="phone" class="form-label">Phonenumber</label>
+                <input id="phone" type="phonenumber" class="form-control" placeholder="Phonenumber">
+              </div>
+              
+
+              
+              <div class="col-sm-12">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="you@domain.com">
+              </div>
+              <div class="col-sm-12" style="margin-top:10px;">
+                <label for="address" class="form-label">Physical Address</label>
+                <textarea type="text" class="form-control" id="address" placeholder="home address"></textarea>
+              </div>
+
+              <div class="col-sm-12" style="margin-top:10px;">
+                <input type="checkbox" class="form-check-input" id="same-address">
+                <label class="form-check-label" for="same-address">Home Delivery </label>
+              </div>
+
+              <div class="col-sm-12" style="margin-top:5px;">
+                <label for="route" class="form-label">Route</label>
+                <select id="route" class="form-control" style="margin-bottom:10px;">
+                  {% for route in routes  %}
+                  {% if route.frm == route.to %}
+                  <option hx-get="{% url "checkout" pk=product.pk%}"  value="{{route.price}}">{{route.to}}</option>
+                  {% else %}
+                  <option hx-get="{% url "checkout" pk=product.pk%}">{{route.frm}}-{{route.to}}</option>
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+  
+            </div>
+            <hr class="my-4">
+  
+            <h4 class="mb-3">Payment Methods</h4>
+  
+            <div class="my-3">
+              
+              <div class="form-check">
+                <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
+                <label class="form-check-label" for="debit">Ecocash </label>
+              </div>
+              <div class="form-check">
+                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+                <label class="form-check-label" for="paypal">OneMoney</label>
+              </div>
+              <div class="form-check">
+                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                <label class="form-check-label" for="credit">Credit card</label>
+              </div>
+            </div>
+            <hr class="my-4">
+            <button class="w-100 btn btn-success btn-md col-sm-12 col-xs-12" type="submit">Paynow</button>
+        </div>
+      </div>
+  </div>
+</form>
+{% endblock main %}

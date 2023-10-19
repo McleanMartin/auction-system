@@ -1,0 +1,32 @@
+{% load static %}
+  <head>
+    <title>login</title>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'signin.css' %} " rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'dist/css/bootstrap.min.css' %} " rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+      {% if messages %}
+      {% for message in messages %}
+          <div style="margin-top:10px;" class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      <form class="form-signin" method="post" actiuon="{% url "accounts:user_register" %}">
+        {% csrf_token %}
+        <h2 class="form-signin-heading">Croco Motor</h2>
+        <label for="inputUser" class="sr-only">Username</label>
+        <input style="margin-bottom:10px;" type="text" name="username" id="inputUser" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputEmail" class="sr-only">Email</label>
+        <input style="margin-bottom:10px;" type="text" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input style="margin-bottom:10px;" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        
+        <button class="btn btn-md btn-primary btn-block" type="submit">Register</button>
+        <a class="btn btn-md btn-primary btn-block" href="{% url "accounts:user_login" %} ">already have an account</a>
+      </form>
+
+    </div> <!-- /container -->

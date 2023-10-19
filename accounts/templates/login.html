@@ -1,0 +1,33 @@
+{% load static %}
+  <head>
+    <title>login</title>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'signin.css' %} " rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'dist/css/bootstrap.min.css' %} " rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+      
+      <form class="form-signin" method="post" actiuon="">
+        {% csrf_token %}
+        <h2 class="form-signin-heading text-center">Croco Motors</h2>
+        <label for="inputUser" class="sr-only">Username</label>
+        <input style="margin-bottom:10px;" type="text" name="username" id="inputUser" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        
+        <button class="btn btn-md btn-primary btn-block" type="submit">Login</button>
+        <a class="btn btn-md btn-primary btn-block" href="{% url "accounts:user_register" %}">Create New Account</a>
+        <div class="col-md-12">
+          {% if messages %}
+            {% for message in messages %}
+                <div style="margin-top:10px;" class="alert alert-xl alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </form>
+
+    </div> <!-- /container -->

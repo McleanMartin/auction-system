@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<div class="col-xs-12 col-sm-9">
+  <p class="pull-right visible-xs">
+    <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle Sidebar</button>
+  </p>
+  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <img  height='200' src="{% static 'img/main1.jpg' %}" alt="First slide">
+      </div>
+      <div class="item">
+        <img height='200'  src="{% static 'img/main2.jpg' %}" alt="Second slide">
+      </div>
+      
+    </div>
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <div class="">
+    {% if auction_list %}
+    {% for auction in auction_list %}
+      {% if action.expired != False %}
+        <div class="container bcontent col-sm-10" style="margin-top: 20px;">
+          <div class="card col-sm-10" style="width: 800px;">
+            <div class="row no-gutters " >
+              <div class="col-sm-5 ">
+                <img class="card-img" width="300" height="200" src="static/img/auction.png" alt="No Image">
+              </div>
+              <div class="col-sm-7">
+                <div class="card-body">
+                  <h3 class="card-title"><strong>{{auction.name}}</strong></h3>
+                  <h2 class="card-title label label-success label-lg ">{{auction.start_date}}</h2>
+                  <h2 class="card-title label label-danger label-lg ">{{auction.end_date}}</h2>
+                  <p class="card-text">Suresh Dasari is a founder and technical lead developer in tutlane.</p>
+                  <a href="{% url "auction" pk=auction.pk %}" class="btn btn-primary">View Auction</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+    {% else %}
+    <div class="card text-center">
+      <h4>No Auction Found !!</h4>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock main %}
