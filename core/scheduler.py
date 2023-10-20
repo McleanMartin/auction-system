@@ -16,8 +16,7 @@ def start():
       	# Hook into the apscheduler logger
         logging.basicConfig()
         logging.getLogger('apscheduler').setLevel(logging.DEBUG)
-
-
+        
     scheduler.add_job(pre_bidder, "cron", id="pre_bidder", hour= '10', second='*/10',replace_existing=True )
     
     # Add the scheduled jobs to the admin interface
