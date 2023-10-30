@@ -80,14 +80,18 @@ class Pre_Bidder(models.Model):
     bid_price = models.DecimalField(max_digits=10, decimal_places=2,help_text="preset bid amount for the product")
     expired = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = ("Pre Bidder")
+        verbose_name_plural = ("Pre Bidder")
+
 class Delivery_Price(models.Model):
     frm = models.CharField(max_length=50)
     to = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
-        verbose_name = ("Delivery_Price")
-        verbose_name_plural = ("Delivery_Prices")
+        verbose_name = ("Delivery Price")
+        verbose_name_plural = ("Delivery Prices")
 
     def __str__(self):
         return self.frm +" - "+ self.to + " Delivery price: "+ str(self.price)
