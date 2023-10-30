@@ -45,7 +45,7 @@
             <tr>
                 <th>#</th>
                 <th>Item Name</th>
-                <th>Auction</th>
+                <th>Auction Item</th>
                 <th>Bid Price</th>
                 <th>Action</th>
             </tr>
@@ -54,11 +54,11 @@
             {% if pre_bids %}
                 {% for bid in pre_bids  %}
                     <tr>
-                        <td>1,001</td>
-                        <td>Lorem</td>
-                        <td>ipsum</td>
-                        <td>dolor</td>
-                        <td>sit</td>
+                        <td>{{bid.pk}}</td>
+                        <td>{{bid.bidder}}</td>
+                        <td>{{bid.product.name}}</td>
+                        <td>{{bid.bid_price}}</td>
+                        <td><button class="btn btn-danger btn-sm">Remove</button></td>
                     </tr>
                 {% endfor %}
             {% endif %}

@@ -9,8 +9,8 @@ class AuctionItemInline(admin.TabularInline):
     ordering = ['bid_price']
 
 
-    # def has_change_permission(self, request, obj):
-    #     return False
+    def has_change_permission(self, request, obj):
+        return False
     
     def has_delete_permission(self, request, obj):
         return False

@@ -103,3 +103,10 @@ class Payment(models.Model):
     item = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=10, decimal_places=2,help_text="total amount for the product")
     created = models.DateTimeField(auto_now=True)
+
+
+class item_status(models.Model):
+    user = models.CharField(max_length=50)
+    auction = models.ForeignKey(Auction,on_delete=models.CASCADE)
+    item = models.ForeignKey(Product, on_delete=models.CASCADE)
+    status = models.BooleanField()

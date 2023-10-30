@@ -54,15 +54,20 @@
                 <h5 class="card-title">Current Price: ${{item.price}}</h5>
                 <h5 class="card-title label label-success">Status: {{item.status|capfirst}}</h5>
                 <h5 class="card-title">Description: {{item.description}}</h5>
-                <form method="post"  action="{% url "bid" pk=item.pk %}">
-                  {% csrf_token %}
-                  {% if auction.start_date.now %}
-                  <input type="number" name="amount" id="">
-                  <button type="submit" class="btn btn-success btn-sm" >Bid Now</button>
+                  {% if status %}
+                  <form method="post"  action="{% url "bid" pk=item.pk %}">
+                    {% csrf_token %}
+                    <input type="number" name="amount" id="">
+                    <button type="submit" class="btn btn-success btn-sm" >Bid Now</button>
+                  </form>
                   {% else %}
-                  <button type="submit" class="btn btn-success btn-sm" >Set Auto Bid</button>
+                  <form action="{% url "prebid" pk=item.pk %}" method="post">
+                    {% csrf_token %}
+                    <input name="amount" id="bid" type="number" required/>
+                    <button type="submit" class="btn btn-success btn-sm" >Set Auto Bid</button>
+                  </form>
                   {% endif %}
-                </form>
+                
               </div>
             </div>
             

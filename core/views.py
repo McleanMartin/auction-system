@@ -1,12 +1,39 @@
 from django.shortcuts import render,get_object_or_404,HttpResponseRedirect,redirect
 from django.utils import timezone
 from core.models import *
-# import paynow
+import paynow
 import time
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib.auth.views import LogoutView ,LoginView
+
+
+from django.conf import settings
+from django.core.mail import send_mail
+
+
+
+
+def close():
+    auctions = Auction.objects.all()
+    for auction in auctions:
+        if timezone.now() > auction.end_date:
+            if auction.expired != True:
+                auction.expired = True #close auction
+                auction.save()
+                
+                slot = Pre_Bidder.objects.filter(auction=auction.pk)
+                bidder = slot.last()
+                bidder.winner = True
+                bidder.save()
+
+                #send email to winner
+                subject = 'Winner'
+                message = f'Hi {bidder.bidder.username}, congratulation you won ,  {bidder.product.name}'
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [bidder.user.email, ]
+                send_mail( subject, message, email_from, recipient_list )
 
 
 def pre_bidder():
@@ -19,14 +46,6 @@ def pre_bidder():
             if slot.expired == False:
                 slot.expired = True #close auction
                 slot.save()
-
-                #auction winner
-                bidder = AuctionBid.objects.filter(auction=slot.pk ,product=product_id)
-                bidder = bidder.last()
-                bidder.winner = True
-                bidder.save()
-
-                #send email to winner
 
 
         elif bid.expired == False and slot.expired == False:
@@ -53,7 +72,7 @@ def pre_bidder():
 
 @login_required(login_url='/accounts/login/')
 def index(request):
-    auction_list = Auction.objects.all()
+    auction_list = Auction.objects.filter(expired=False)
     return render(request,'index.html',{'auction_list':auction_list})
 
 @login_required(login_url='/accounts/login/')
@@ -62,10 +81,20 @@ def auction(request,pk):
         auction = Auction.objects.get(pk=pk)
         items = Product.objects.filter(slot=auction)
         related = Product.objects.filter(slot=auction)[:4]
+
+        if timezone.now() < auction.start_date :
+            status = False
+        else:
+            status = True
         
+                
     finally:
         pass
-    return render(request,'auction.html',{'items':items,'auction':auction,'related':related})
+    return render(request,'auction.html',
+                        {'items':items,
+                        'auction':auction,
+                        'related':related,
+                        'status':status})
 
 @login_required(login_url='/accounts/login/')
 def bidder(request,pk):
@@ -106,7 +135,16 @@ def set_bid(request,pk):
             product=item,
             bid_price=set_amount)
         pre_bid.save()
-        #alert here
+        proxy_status  = item_status.objects.create(
+            user = user,
+            auction = item.slot.pk,
+            item = item.pk,
+            status = True 
+        ) 
+        proxy_status.save()
+        id = item.slot.pk
+        msg = messages.success(request,'Your Pre bid for '+ item.name + ' was successful')
+        return HttpResponseRedirect('/auction/'+ str(id),{'msg':msg})
 
 
 def live_bids(request):
@@ -177,6 +215,10 @@ def payment_process(request,pk):
             return HttpResponseRedirect('/bids/',{'msg':msg})
 
 
+
+def hide(request):
+    proxy = item_status.objects.filter(user=request.user,pk=item.pk)
+    return proxy
 
 
 
