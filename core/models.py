@@ -73,6 +73,11 @@ class AuctionBid(models.Model):
     def __str__(self):
         return str(self.bidder.username)
 
+class StorageBill(models.Model):
+    winner = models.ForeignKey(User, on_delete=models.CASCADE)
+    charge = models.PositiveIntegerField(default=0)
+    days = models.PositiveIntegerField(default=0)
+
 
 class Pre_Bidder(models.Model):
     bidder = models.ForeignKey(User,on_delete=models.CASCADE)

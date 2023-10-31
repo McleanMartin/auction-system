@@ -7,12 +7,21 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib.auth.views import LogoutView ,LoginView
-
-
 from django.conf import settings
 from django.core.mail import send_mail
 
 
+
+def charge():
+    clients = AuctionBid.objects.filter(winner=True)
+    for client in clients:
+        if client.auction.expired == True:
+            product = Product.objects.get(pk = client.product.pk)
+            product.price += 2
+            product.save()
+            print(f' price: {client.product.price}')
+        else:
+            pass
 
 
 def close():
@@ -22,8 +31,8 @@ def close():
             if auction.expired != True:
                 auction.expired = True #close auction
                 auction.save()
-                
-                slot = Pre_Bidder.objects.filter(auction=auction.pk)
+
+                slot = AuctionBid.objects.filter(auction=auction.pk)
                 bidder = slot.last()
                 bidder.winner = True
                 bidder.save()
@@ -135,13 +144,6 @@ def set_bid(request,pk):
             product=item,
             bid_price=set_amount)
         pre_bid.save()
-        proxy_status  = item_status.objects.create(
-            user = user,
-            auction = item.slot.pk,
-            item = item.pk,
-            status = True 
-        ) 
-        proxy_status.save()
         id = item.slot.pk
         msg = messages.success(request,'Your Pre bid for '+ item.name + ' was successful')
         return HttpResponseRedirect('/auction/'+ str(id),{'msg':msg})
@@ -153,7 +155,7 @@ def live_bids(request):
 
 
 def my_bids(request):
-    bids= AuctionBid.objects.filter(bidder=request.user,winner=True)
+    bids = AuctionBid.objects.filter(bidder=request.user,winner=True)
     pre_bids = Pre_Bidder.objects.filter(bidder=request.user)
     delivery = Delivery_Price.objects.all()
     return render(request,'partials/mybids.html',{'bids':bids,'pre_bids':pre_bids,'delivery':delivery,})
@@ -215,10 +217,10 @@ def payment_process(request,pk):
             return HttpResponseRedirect('/bids/',{'msg':msg})
 
 
-
-def hide(request):
-    proxy = item_status.objects.filter(user=request.user,pk=item.pk)
-    return proxy
+@login_required(login_url='/accounts/login/')
+def remove_prebid(request,pk):
+    # bid = Pre_Bidder.objects.get(pk=pk)
+    return HttpResponseRedirect(redirect('bids/'))
 
 
 

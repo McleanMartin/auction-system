@@ -43,7 +43,7 @@
                   <h3 class="card-title"><strong>{{auction.name}}</strong></h3>
                   <h2 class="card-title label label-success label-lg ">{{auction.start_date}}</h2>
                   <h2 class="card-title label label-danger label-lg ">{{auction.end_date}}</h2>
-                  <p class="card-text">Suresh Dasari is a founder and technical lead developer in tutlane.</p>
+                  <p class="card-text">{{auction.description}}.</p>
                   <a href="{% url "auction" pk=auction.pk %}" class="btn btn-primary">View Auction</a>
                 </div>
               </div>
@@ -53,8 +53,8 @@
       {% endif %}
     {% endfor %}
     {% else %}
-    <div class="card text-center">
-      <h4>No Auction Found !!</h4>
+    <div style="margin-top:20px;" class="card text-center">
+      <h4>No UpComing Auctions Found </h4>
     </div>
     {% endif %}
   </div>

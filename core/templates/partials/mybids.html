@@ -22,7 +22,7 @@
                         <td>{{bid.product.pk}}</td>
                         <td>{{bid.product.name}}</td>
                         <td>{{bid.product.slot}}</td>
-                        <td>{{bid.product.price}}</td>
+                        <td>${{bid.product.price}}</td>
                         <td><a href="{% url "checkout" pk=bid.product.pk%}" class=" btn btn-success btn-sm">payment</a></td>
                         {% if sold %}
                         <td><button hx-post="" class="btn btn-info btn-sm">Print Reciept</button></td>
@@ -57,8 +57,8 @@
                         <td>{{bid.pk}}</td>
                         <td>{{bid.bidder}}</td>
                         <td>{{bid.product.name}}</td>
-                        <td>{{bid.bid_price}}</td>
-                        <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                        <td>${{bid.bid_price}}</td>
+                        <td><a href="{% url "delbid" bid.pk %}" class="btn btn-danger btn-sm">Remove</a></td>
                     </tr>
                 {% endfor %}
             {% endif %}
@@ -68,22 +68,7 @@
         </table>
     </div>
     <hr>
-    <div class="table-responsive">
-        <div class="panel-header">
-          <h4 class="label label-default">Delivery Prices</h4>
-        </div>
-        <table class="table">
-          <tbody>
-            {% for item in delivery %}
-            <tr>
-              <td>{{item.frm}}</td>
-              <td>{{item.to}}</td>
-              <td>${{item.price}} USD</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    
 
 </div>
 {% endblock main %}

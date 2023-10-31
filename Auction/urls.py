@@ -12,6 +12,7 @@ urlpatterns = [
     path('auction/<int:pk>/',v.auction,name='auction'),
     path('bid/<int:pk>/',v.bidder,name='bid'),
     path('prebid/<int:pk>/',v.set_bid,name='prebid'),
+    path('delbid/<int:pk>/',v.remove_prebid,name='delbid'),
     path('live-bids/',v.live_bids,name='live-bids'),
     path('bids/',v.my_bids,name='bids'),
     path('paynow',v.payment_process,name='paynow'),
