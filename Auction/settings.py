@@ -178,4 +178,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 
+JET_SIDE_MENU_CUSTOM_APPS = [
+    ('core', [
+        'Auction',
+        'Category',
+        'Delivery_Price',
+        'Pre_Bidder',
+        'Product',
+    ]),
+]
+
+
+JET_DEFAULT_THEME = 'green'
 

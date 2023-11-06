@@ -12,20 +12,60 @@ from django.core.mail import send_mail
 
 
 
+def dailySales():
+    #replace this with payment objects 
+    products = Product.objects.all()
+
+
 def charge():
     clients = AuctionBid.objects.filter(winner=True)
     for client in clients:
-        if client.auction.expired == True:
-            product = Product.objects.get(pk = client.product.pk)
+        auction = Auction.objects.get(pk = client.auction.pk)
+        if StorageBill.objects.get(auction=auction):
+            bill = StorageBill.objects.get(auction=auction)
+            bill.charge += 2
+            bill.days += 1
+            bill.save()
+
+            product = Product.objects.get(pk = client.product.pk,sold=False)
             product.price += 2
             product.save()
-            print(f' price: {client.product.price}')
+                    
+             
+            if bill.days > 5:
+                #remove winners
+                for client in clients:
+                    client.delete()
+
+                #re-auctioning
+                auction = Auction.objects.get(pk = client.auction.pk)
+                auction.expired = False
+                auction.save()
+
         else:
-            pass
+            bill = StorageBill.objects.create(
+                auction = auction,
+                charge = 2,
+                days = 1
+            )
+            bill.save()
+
+            product = Product.objects.get(pk = client.product.pk,sold=False)
+            product.price += 2
+            product.save()
+
+            
+        
+    
+    
+
+
+
 
 
 def close():
     auctions = Auction.objects.all()
+    
     for auction in auctions:
         if timezone.now() > auction.end_date:
             if auction.expired != True:

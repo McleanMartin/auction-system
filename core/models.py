@@ -38,9 +38,9 @@ class Auction(models.Model):
 
 class Product(models.Model):
     choice = (('new','new'),('pre-owned','pre-owned'))
-    category = models.ForeignKey(Category,related_name='products',on_delete=models.CASCADE)
-    slot = models.ForeignKey(Auction, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, db_index=True)
+    millage = models.CharField(max_length=500)
+    slot = models.ForeignKey(Auction, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='auction/%Y/%m/%d',blank=True)
     description = models.TextField(blank=True)
     status = models.CharField(choices=choice,default="new", max_length=50)
@@ -52,6 +52,10 @@ class Product(models.Model):
     class Meta:
         ordering = ('name',)
         index_together = (('id', 'name'),)
+    
+    class Meta:
+        verbose_name = ("Vehicle")
+        verbose_name_plural = ("Vehicles")
 
     def __str__(self):
         return self.name
@@ -74,7 +78,7 @@ class AuctionBid(models.Model):
         return str(self.bidder.username)
 
 class StorageBill(models.Model):
-    winner = models.ForeignKey(User, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     charge = models.PositiveIntegerField(default=0)
     days = models.PositiveIntegerField(default=0)
 
@@ -114,8 +118,3 @@ class Payment(models.Model):
     created = models.DateTimeField(auto_now=True)
 
 
-class item_status(models.Model):
-    user = models.CharField(max_length=50)
-    auction = models.ForeignKey(Auction,on_delete=models.CASCADE)
-    item = models.ForeignKey(Product, on_delete=models.CASCADE)
-    status = models.BooleanField()

@@ -14,13 +14,13 @@ scheduler = BackgroundScheduler(settings.SCHEDULER_CONFIG)
 def start():
     if settings.DEBUG:
       	# Hook into the apscheduler logger
-        # logging.basicConfig()
-        # logging.getLogger('apscheduler').setLevel(logging.DEBUG)
-        pass
+        logging.basicConfig()
+        logging.getLogger('apscheduler').setLevel(logging.DEBUG)
         
-    scheduler.add_job(pre_bidder, "cron", id="pre_bidder", hour= '*', second='*/10',replace_existing=True )
-    scheduler.add_job(close, "cron", id="close", hour= '*', second='*/1',replace_existing=True )
-    scheduler.add_job(charge, "cron", id="storage bill",hour= '15',replace_existing=True )
+        
+    scheduler.add_job(pre_bidder, "cron", id="pre_bidder", hour= '3', second='*/10',replace_existing=True )
+    scheduler.add_job(close, "cron", id="close", hour= '3', second='*/1',replace_existing=True )
+    scheduler.add_job(charge, "cron", id="storage bill",hour= '*', second='*/10',replace_existing=True )
     # Add the scheduled jobs to the admin interface
     register_events(scheduler)
 

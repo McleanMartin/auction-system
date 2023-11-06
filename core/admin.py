@@ -9,8 +9,8 @@ class AuctionItemInline(admin.TabularInline):
     ordering = ['bid_price']
 
 
-    def has_change_permission(self, request, obj):
-        return False
+    # def has_change_permission(self, request, obj):
+    #     return False
     
     def has_delete_permission(self, request, obj):
         return False
@@ -35,12 +35,8 @@ class Pre_BidderAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name','price']
-    list_display = ['name','category','price','slot','sold']
+    list_display = ['name','price','slot','sold']
 
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    search_fields = ['name']
 
 @admin.register(Delivery_Price)
 class Delivery_PriceAdmin(admin.ModelAdmin):
@@ -48,4 +44,6 @@ class Delivery_PriceAdmin(admin.ModelAdmin):
 
 
 admin.site.site_header = 'Croco Motors'
+admin.site.index_title = 'Croco Motors'
+admin.site.site_title = 'Croco Motors'
     
