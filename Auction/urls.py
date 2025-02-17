@@ -6,7 +6,6 @@ from django.conf.urls.static import static
 from core import views as v
 
 urlpatterns = [
-    path('jet/', include('jet.urls', 'jet')),
     path('admin/', admin.site.urls),
     path('',v.index,name='index'),
     path('auction/<int:pk>/',v.auction,name='auction'),

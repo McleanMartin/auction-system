@@ -41,7 +41,6 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
-    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -110,12 +109,12 @@ WSGI_APPLICATION = 'Auction.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Auction',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': 'pa22w0rd',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
 
@@ -178,16 +177,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 
-JET_SIDE_MENU_CUSTOM_APPS = [
-    ('core', [
-        'Auction',
-        'Category',
-        'Delivery_Price',
-        'Pre_Bidder',
-        'Product',
-    ]),
-]
 
-
-JET_DEFAULT_THEME = 'green'
 
