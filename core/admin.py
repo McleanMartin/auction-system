@@ -1,49 +1,83 @@
-from typing import Optional
 from django.contrib import admin
-from django.http.request import HttpRequest
-from .models import Auction,AuctionBid,Product,Category,Pre_Bidder,Delivery_Price
+from django.utils.html import format_html
+from .models import (
+    Category, Auction, Product, AuctionBid, StorageBill, Delivery_Price, Payment
+)
 
-class AuctionItemInline(admin.TabularInline):
-    model = AuctionBid
-    raw_id_fields = ['product']
-    ordering = ['bid_price']
+# Category Admin
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+    prepopulated_fields = {'slug': ('name',)}  # If you add a slug field later
 
 
-    # def has_change_permission(self, request, obj):
-    #     return False
-    
-    def has_delete_permission(self, request, obj):
-        return False
-    
-    def has_add_permission(self, request,obj):
-        return False
-    
+# Auction Admin
 @admin.register(Auction)
 class AuctionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name','start_date','end_date','expired']
+    list_display = ['id', 'name', 'start_date', 'end_date', 'expired']
     list_filter = ['expired', 'created']
-    list_display_links = ['name']
     search_fields = ['name']
-    inlines = [AuctionItemInline]
+    date_hierarchy = 'start_date'
+    readonly_fields = ['created', 'updated']
+    actions = ['mark_as_expired']
 
-@admin.register(Pre_Bidder)
-class Pre_BidderAdmin(admin.ModelAdmin):
-    list_display = ['bidder','product','bid_price','expired']
-    search_fields = ['bidder','product']
-    
+    def mark_as_expired(self, request, queryset):
+        queryset.update(expired=True)
+    mark_as_expired.short_description = "Mark selected auctions as expired"
 
+
+# Product Admin
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    search_fields = ['name','price']
-    list_display = ['name','price','slot','sold']
+    list_display = ['name', 'category', 'auction', 'price', 'sold', 'condition']
+    list_filter = ['sold', 'condition', 'category', 'auction']
+    search_fields = ['name', 'description']
+    readonly_fields = ['created', 'updated']
+    raw_id_fields = ['category', 'auction']
+    actions = ['mark_as_sold']
+
+    def mark_as_sold(self, request, queryset):
+        queryset.update(sold=True)
+    mark_as_sold.short_description = "Mark selected products as sold"
 
 
+# AuctionBid Admin
+@admin.register(AuctionBid)
+class AuctionBidAdmin(admin.ModelAdmin):
+    list_display = ['bidder', 'product', 'bid_price', 'winner', 'created']
+    list_filter = ['winner', 'created']
+    search_fields = ['bidder__username', 'product__name']
+    raw_id_fields = ['bidder', 'product', 'auction']
+    readonly_fields = ['created']
+
+
+# StorageBill Admin
+@admin.register(StorageBill)
+class StorageBillAdmin(admin.ModelAdmin):
+    list_display = ['auction', 'charge', 'days']
+    search_fields = ['auction__name']
+    raw_id_fields = ['auction']
+
+
+# Delivery_Price Admin
 @admin.register(Delivery_Price)
 class Delivery_PriceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['frm', 'to', 'price']
+    search_fields = ['frm', 'to']
+    list_filter = ['frm', 'to']
 
 
-admin.site.site_header = 'Croco Motors'
-admin.site.index_title = 'Croco Motors'
-admin.site.site_title = 'Croco Motors'
-    
+# Payment Admin
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ['transcation_id', 'acution', 'phonenumber', 'item', 'amount', 'created']
+    search_fields = ['acution', 'item', 'phonenumber']
+    list_filter = ['created']
+    readonly_fields = ['created']
+
+
+# Customize Admin Site
+admin.site.site_header = 'Auction Admin'
+admin.site.index_title = 'Auction Management'
+admin.site.site_title = 'Auction Admin Panel'

@@ -1,40 +1,47 @@
+/* signin.css */
 body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #eee;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+.card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-  margin-bottom: 10px;
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
-.form-signin .checkbox {
-  font-weight: normal;
+
+.form-signin .form-floating input {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s ease;
 }
-.form-signin .form-control {
-  position: relative;
-  height: auto;
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+
+.form-signin .form-floating input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 10px;
   padding: 10px;
-  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
-.form-signin .form-control:focus {
-  z-index: 2;
+
+.btn-primary:hover {
+  background-color: #0056b3;
 }
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+
+.alert {
+  border-radius: 10px;
 }

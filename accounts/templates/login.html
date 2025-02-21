@@ -1,34 +1,71 @@
 {% load static %}
-  <head>
-    <title>login</title>
-    <!-- Custom styles for this template -->
-    <link href="{% static 'signin.css' %} " rel="stylesheet">
-    <!-- Bootstrap core CSS -->
-    <link href="{% static 'dist/css/bootstrap.min.css' %} " rel="stylesheet">
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <!-- Card for Login Form -->
+        <div class="card shadow-lg my-5">
+          <div class="card-body p-4">
+            <!-- Logo and Heading -->
+            <div class="text-center mb-4">
+              <img src="{% static 'img/auction.png' %}" alt="Croco Motors Logo" class="mb-3" width="100">
+              <h3 class="h3 mb-3 fw-normal">Croco Motors</h3>
+            </div>
 
-  <body>
+            <!-- Login Form -->
+            <form class="form-signin" method="post" action="{% url 'accounts:user_login' %}">
+              {% csrf_token %}
+              
+              <!-- Username Field -->
+              <div class="form-floating mb-3">
+                <input type="text" name="username" id="inputUser" class="form-control" placeholder="Username" required autofocus>
+                <label for="inputUser">Username</label>
+              </div>
 
-    <div class="container">
-      
-      <form class="form-signin" method="post" actiuon="">
-        {% csrf_token %}
-        <img  src="{% static "img/auction.png" %}"/>
-        <h3 class="form-signin-heading text-center">Croco Motors</h3>
-        <label for="inputUser" class="sr-only">Username</label>
-        <input style="margin-bottom:10px;" type="text" name="username" id="inputUser" class="form-control" placeholder="Username" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        
-        <button style="background-color:teal;" class="btn btn-md btn-primary btn-block" type="submit">Login</button>
-        <a  style="background-color:teal;" class="btn btn-md btn-primary btn-block" href="{% url "accounts:user_register" %}">Create New Account</a>
-        <div class="col-md-12">
-          {% if messages %}
-            {% for message in messages %}
-                <div style="margin-top:10px;" class="alert alert-xl alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
+              <!-- Password Field -->
+              <div class="form-floating mb-4">
+                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <label for="inputPassword">Password</label>
+              </div>
+
+              <!-- Submit Button -->
+              <button class="w-100 btn btn-lg btn-teal" type="submit">Login</button>
+
+              <!-- Create Account Link -->
+              <div class="text-center mt-3">
+                <p class="text-muted">Don't have an account? <a href="{% url 'accounts:user_register' %}" class="text-decoration-none">Create New Account</a></p>
+              </div>
+            </form>
+
+            <!-- Display Messages -->
+            {% if messages %}
+              <div class="mt-4">
+                {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
         </div>
-      </form>
+      </div>
+    </div>
+  </div>
 
-    </div> <!-- /container -->
+  <!-- Bootstrap 5 JS (Optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
