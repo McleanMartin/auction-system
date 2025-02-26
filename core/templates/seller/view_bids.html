@@ -1,12 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>View Bids</h1>
-<ul>
-    {% for bid in bids %}
-    <li>
-        {{ bid.product.name }} - {{ bid.bid_price }} by {{ bid.bidder.username }}
-    </li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    <h1 class="display-4 mb-4">View Bids</h1>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Bid Price</th>
+                    <th scope="col">Bidder</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bid in bids %}
+                <tr>
+                    <td>{{ bid.product.name }}</td>
+                    <td>${{ bid.bid_price }}</td>
+                    <td>{{ bid.bidder.username }}</td>
+                    <td>
+                        {% if bid.winner %}
+                            <span class="badge bg-success">Winner</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Active</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

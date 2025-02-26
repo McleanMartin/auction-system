@@ -2,36 +2,44 @@
 {% load static %}
 {% block main %}
 
-<!-- Countdown Timer Script -->
 <script>
   function makeTimer() {
-    var endTime = new Date({{ auction.end_date|date:"U" }} * 1000);
-    endTime = Date.parse(endTime) / 1000;
+    var endTime = new Date("{{ auction.end_date|date:'Y-m-d H:i:s' }}");
+    endTime = Date.parse(endTime) / 1000; 
 
     var now = new Date();
-    now = Date.parse(now) / 1000;
+    now = Date.parse(now) / 1000; 
 
     var timeLeft = endTime - now;
+
+    if (timeLeft <= 0) {
+      $("#timer").html(`<span class="countdown-number">Auction Ended</span>`);
+      return;
+    }
 
     var days = Math.floor(timeLeft / 86400);
     var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
     var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600)) / 60);
     var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
 
-    if (hours < "10") { hours = "0" + hours; }
-    if (minutes < "10") { minutes = "0" + minutes; }
-    if (seconds < "10") { seconds = "0" + seconds; }
+    if (hours < 10) { hours = "0" + hours; }
+    if (minutes < 10) { minutes = "0" + minutes; }
+    if (seconds < 10) { seconds = "0" + seconds; }
 
-    $("#timer").html(`<span class="countdown-number">${days}</span> Days <span class="countdown-number">${hours}</span> Hrs <span class="countdown-number">${minutes}</span> Min <span class="countdown-number">${seconds}</span> Sec`);
+    $("#timer").html(`
+      <span class="countdown-number">${days}</span> Days 
+      <span class="countdown-number">${hours}</span> Hrs 
+      <span class="countdown-number">${minutes}</span> Min 
+      <span class="countdown-number">${seconds}</span> Sec
+    `);
   }
 
+
   setInterval(function() { makeTimer(); }, 1000);
+  makeTimer();
 </script>
 
 <div class="container my-5">
- 
-
-  <!-- Auction Header -->
   <div class="text-center mb-5">
     <h1 class="display-4 fw-bold">{{ auction.name }}</h1>
     <div id="timer" class="countdown-timer fs-3 fw-bold text-danger mt-3">
@@ -39,14 +47,13 @@
     </div>
   </div>
 
-  <!-- Auction Items -->
   <div class="row g-4">
     {% for product in items %}
       <div class="col-md-6">
         <div class="card h-100 shadow-sm">
           <div class="row g-0">
             <div class="col-md-5">
-              <img src="#" class="img-fluid rounded-start" alt="{{ product.name }}" style="object-fit: cover; height: 100%;">
+              <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="{{ product.name }}" style="object-fit: cover; height: 100%;">
             </div>
             <div class="col-md-7">
               <div class="card-body">
@@ -74,8 +81,6 @@
       </div>
     {% endfor %}
   </div>
-
-  <!-- Related Items -->
   <div class="mt-5">
     <h3 class="fw-bold mb-4">Related Items</h3>
     <div class="row g-4">
@@ -95,7 +100,6 @@
   </div>
 </div>
 
-<!-- Custom CSS for Countdown Timer -->
 <style>
   .countdown-timer {
     background: linear-gradient(135deg, #f8f9fa, #e9ecef);
