@@ -24,7 +24,7 @@ def user_register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your account has been created successfully! Please log in.')
+            # messages.success(request, 'Your account has been created successfully! Please log in.')
             return redirect('user_login')
     else:
         form = UserRegistrationForm()
@@ -42,15 +42,12 @@ def user_login(request):
             
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Welcome back, {username}!')
                 if user.is_superuser:
                     return redirect('admin:index')
                 else:
                     return redirect('index')
-            else:
-                messages.error(request, 'Invalid username or password.')
         else:
-            messages.error(request, 'Invalid username or password.')
+            return redirect('user_login')
     else:
         form = AuthenticationForm()
     
@@ -60,7 +57,6 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    messages.success(request, 'You have been logged out successfully.')
     return redirect('user_login')
 
 

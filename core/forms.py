@@ -25,18 +25,27 @@ class UserRegistrationForm(UserCreationForm):
     """
     Form for user registration with account type selection.
     """
-    email = forms.EmailField(required=True)
-    phonenumber = forms.CharField(max_length=50, required=True)
+    email = forms.EmailField(required=True, help_text=None)
+    phonenumber = forms.CharField(max_length=50, required=True, help_text=None)
     account_type = forms.ChoiceField(
         required=True,
         widget=RadioSelect(attrs={'class': 'form-control col'}),
         choices=((1, 'Seller'), (2, 'Buyer')),
         initial=2,
+        help_text=None,
     )
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'phonenumber', 'password1', 'password2', 'account_type']
+
+    def __init__(self, *args, **kwargs):
+        """
+        Remove help text from password fields.
+        """
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].help_text = None
+        self.fields['password2'].help_text = None
 
     def clean_email(self):
         """
@@ -69,7 +78,6 @@ class UserRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
 
 class EditProfileForm(forms.ModelForm):
     class Meta:
