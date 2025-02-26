@@ -23,30 +23,9 @@ def user_register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            CustomUser.objects.create_user(username=username,email=email,password=password)
-            
+            form.save()
             messages.success(request, 'Your account has been created successfully! Please log in.')
             return redirect('user_login')
-    else:
-        form = UserRegistrationForm()
-    
-    context = {'title': 'Signup', 'form': form}
-    return render(request, 'register.html', context)
-
-def seller_register(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            User.objects.create_user(username=username,email=email,password=password)
-            
-            messages.success(request, 'Your account has been created successfully! Please log in.')
-            return redirect('accounts:user_login')
     else:
         form = UserRegistrationForm()
     
