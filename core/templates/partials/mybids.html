@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block main %}
-<div class="fluid-container col-md-8">
+<div class="fluid-container col-md-12">
     <div class="table-responsive">
         <div class="panel-header">
-            <h4 class="label label-default">Wins</h4>
+            <h3 class="label label-default">My Biddings</h3>
           </div>
         <table class="table">
           <thead>
@@ -16,8 +16,8 @@
             </tr>
           </thead>
           <tbody>
-            {% if bids %}
-                {% for bid in bids  %}
+            {% if winning_bids %}
+                {% for bid in winning_bids  %}
                     <tr>
                         <td>{{bid.product.pk}}</td>
                         <td>{{bid.product.name}}</td>

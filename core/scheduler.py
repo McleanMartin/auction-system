@@ -13,9 +13,10 @@ scheduler = BackgroundScheduler(settings.SCHEDULER_CONFIG)
 def start():
     try:
         if settings.DEBUG:
+          pass
             # Enable detailed logging for debugging
-            logging.basicConfig()
-            logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+            # logging.basicConfig()
+            # logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
         # Schedule the 'close' job to run every hour
         scheduler.add_job(
@@ -37,10 +38,7 @@ def start():
             replace_existing=True,
         )
 
-        # Register scheduler events with Django admin
         register_events(scheduler)
-
-        # Start the scheduler
         scheduler.start()
         logger.info("Scheduler started successfully.")
 

@@ -29,19 +29,11 @@
 </script>
 
 <div class="container my-5">
-  <!-- Messages -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
+ 
 
   <!-- Auction Header -->
   <div class="text-center mb-5">
-    <h1 class="display-4 fw-bold">{{ auction.name }} Auction</h1>
+    <h1 class="display-4 fw-bold">{{ auction.name }}</h1>
     <div id="timer" class="countdown-timer fs-3 fw-bold text-danger mt-3">
       Loading countdown...
     </div>
@@ -49,12 +41,12 @@
 
   <!-- Auction Items -->
   <div class="row g-4">
-    {% for product in products %}
+    {% for product in items %}
       <div class="col-md-6">
         <div class="card h-100 shadow-sm">
           <div class="row g-0">
             <div class="col-md-5">
-              <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="{{ product.name }}" style="object-fit: cover; height: 100%;">
+              <img src="#" class="img-fluid rounded-start" alt="{{ product.name }}" style="object-fit: cover; height: 100%;">
             </div>
             <div class="col-md-7">
               <div class="card-body">

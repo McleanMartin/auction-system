@@ -47,13 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_apscheduler',#
+    'django_apscheduler',
+    'django_bootstrap5',
     'core',
-    'accounts'
 ]
 
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'core.CustomUser'
 LOGOUT_REDIRECT_URL = '/'
 
 
@@ -88,7 +88,7 @@ ROOT_URLCONF = 'Auction.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR,'core','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

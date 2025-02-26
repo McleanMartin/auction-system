@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>View Bids</h1>
+<ul>
+    {% for bid in bids %}
+    <li>
+        {{ bid.product.name }} - {{ bid.bid_price }} by {{ bid.bidder.username }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

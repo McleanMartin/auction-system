@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <div class="col-md-6">
+        <form method="POST">
+            {% csrf_token %}
+            <h3>Edit Profile</h3>
+            <hr>
+            {% bootstrap_form form %}
+            <div class="form-group">
+                {% bootstrap_button button_type="submit" content="Update" %}
+                {% bootstrap_button button_type="reset" content="Cancel" %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

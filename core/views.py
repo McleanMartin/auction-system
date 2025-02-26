@@ -1,13 +1,88 @@
+import paynow
+import time
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, redirect, reverse
 from django.utils import timezone
 from core.models import *
-import paynow
-import time
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.views import LogoutView, LoginView
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from .models import CustomUser
+from .forms import UserRegistrationForm, EditProfileForm
+from django.views.generic import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+
+def user_register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            CustomUser.objects.create_user(username=username,email=email,password=password)
+            
+            messages.success(request, 'Your account has been created successfully! Please log in.')
+            return redirect('user_login')
+    else:
+        form = UserRegistrationForm()
+    
+    context = {'title': 'Signup', 'form': form}
+    return render(request, 'register.html', context)
+
+def seller_register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            User.objects.create_user(username=username,email=email,password=password)
+            
+            messages.success(request, 'Your account has been created successfully! Please log in.')
+            return redirect('accounts:user_login')
+    else:
+        form = UserRegistrationForm()
+    
+    context = {'title': 'Signup', 'form': form}
+    return render(request, 'register.html', context)
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Welcome back, {username}!')
+                if user.is_superuser:
+                    return redirect('admin:index')
+                else:
+                    return redirect('index')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        form = AuthenticationForm()
+    
+    context = {'title': 'Login', 'form': form}
+    return render(request, 'login.html', context)
+
+@login_required
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect('user_login')
 
 
 def dailySales(): 
@@ -15,7 +90,6 @@ def dailySales():
 
 def charge():
     clients = AuctionBid.objects.filter(winner=True)
-
     for client in clients:
         auction = client.auction
         product = client.product
@@ -47,7 +121,6 @@ def charge():
             
 def close():
     auctions = Auction.objects.filter(expired=False) 
-
     for auction in auctions:
         if timezone.now() > auction.end_date:
             auction.expired = True
@@ -100,8 +173,8 @@ def index(request):
 def auction(request, pk):
     try:
         auction = get_object_or_404(Auction, pk=pk)
-        items = Product.objects.filter(slot=auction)
-        related = Product.objects.filter(slot=auction).exclude(pk__in=[item.pk for item in items])[:4]
+        items = Product.objects.filter(auction=auction)
+        related = Product.objects.filter(auction=auction).exclude(pk__in=[item.pk for item in items])[:4]
         status = timezone.now() >= auction.start_date
 
     except Exception as e:
@@ -122,7 +195,7 @@ def bidder(request, pk):
     if request.method == 'POST':
         try:
             product = get_object_or_404(Product, pk=pk)
-            auction_id = product.slot.pk
+            auction_id = product.auction.pk
 
             bid = request.POST.get('amount')
             if not bid:
@@ -140,7 +213,7 @@ def bidder(request, pk):
 
             AuctionBid.objects.create(
                 bidder=request.user,
-                auction=product.slot,
+                auction=product.auction,
                 bid_price=bid,
                 product=product,
             )
@@ -164,43 +237,36 @@ def bidder(request, pk):
 
 @login_required(login_url='/accounts/login/')
 def set_bid(request, pk):
-    # Ensure the user is authenticated
     if not request.user.is_authenticated:
         messages.error(request, "You must be logged in to place a bid.")
-        return redirect('login')  # Redirect to the login page
+        return redirect('login')
 
     if request.method == 'POST':
         try:
-            # Get the product and validate the bid amount
             product = get_object_or_404(Product, pk=pk)
             set_amount = float(request.POST.get('amount', 0))
 
             if set_amount <= 0:
                 raise ValidationError("Bid amount must be greater than 0.")
 
-            # Check if the user has already placed a bid for this product
             existing_bid = Pre_Bidder.objects.filter(bidder=request.user, product=product).first()
             if existing_bid:
                 messages.warning(request, f"You have already placed a bid for {product.name}.")
-                return redirect('auction_detail', pk=product.slot.pk)
+                return redirect('auction_detail', pk=product.auction.pk)
 
-            # Ensure the bid amount is higher than the current highest bid
             highest_bid = Pre_Bidder.objects.filter(product=product).order_by('-bid_price').first()
             if highest_bid and set_amount <= highest_bid.bid_price:
                 messages.error(request, f"Your bid must be higher than the current highest bid of {highest_bid.bid_price}.")
-                return redirect('auction_detail', pk=product.slot.pk)
+                return redirect('auction_detail', pk=product.auction.pk)
 
-            # Create and save the new bid
             pre_bid = Pre_Bidder.objects.create(
                 bidder=request.user,
                 product=product,
                 bid_price=set_amount
             )
             pre_bid.save()
-
-            # Success message and redirect
             messages.success(request, f"Your pre-bid for {product.name} was successful.")
-            return redirect('auction_detail', pk=product.slot.pk)
+            return redirect('auction_detail', pk=product.auction.pk)
 
         except ValidationError as e:
             messages.error(request, str(e))
@@ -209,7 +275,6 @@ def set_bid(request, pk):
             messages.error(request, "An error occurred while processing your bid.")
             return redirect('auction_detail', pk=pk)
 
-    # If not a POST request, redirect to the auction detail page
     return redirect('auction_detail', pk=pk)
 
 def live_bids(request):
@@ -220,37 +285,30 @@ def live_bids(request):
 @login_required
 def my_bids(request):
     try:
-        # Fetch the user's winning bids with related data to optimize queries
         winning_bids = AuctionBid.objects.filter(bidder=request.user, winner=True) \
                                         .select_related('auction', 'product')
 
-        # Fetch all delivery prices (or filter if necessary)
         delivery_prices = Delivery_Price.objects.all()
-
-        # Handle empty state
         if not winning_bids.exists():
             messages.info(request, "You have no winning bids at the moment.")
             return render(request, 'partials/mybids.html', {'winning_bids': [], 'delivery_prices': delivery_prices})
 
-        # Render the template with context
+       
         return render(request, 'partials/mybids.html', {
             'winning_bids': winning_bids,
             'delivery_prices': delivery_prices,
         })
 
     except Exception as e:
-        # Log the error and return a user-friendly message
         messages.error(request, "An error occurred while fetching your bids. Please try again later.")
         return render(request, 'partials/mybids.html', {'winning_bids': [], 'delivery_prices': []})
 
 
 def checkout(request, pk):
-    # Ensure the user is authenticated
     if not request.user.is_authenticated:
         messages.error(request, "You must be logged in to proceed to checkout.")
-        return redirect('login')  # Redirect to the login page
+        return redirect('login')
 
-    # Get the product or return a 404 error if not found
     product = get_object_or_404(Product, pk=pk)
     routes = Delivery_Price.objects.all()
     total_price = float(product.price)
@@ -271,12 +329,10 @@ def checkout(request, pk):
     })
 
 def payment_process(request, pk):
-    # Ensure the user is authenticated
     if not request.user.is_authenticated:
         messages.error(request, "You must be logged in to proceed with payment.")
-        return redirect('login')  # Redirect to the login page
+        return redirect('login')
 
-    # Get the bid and product or return a 404 error if not found
     bid = get_object_or_404(AuctionBid, pk=pk)
     product = get_object_or_404(Product, pk=bid.product.pk)
 
@@ -284,10 +340,9 @@ def payment_process(request, pk):
         number = request.POST.get('number')
         if not number or not number.isdigit():
             messages.error(request, "Invalid phone number provided.")
-            return redirect('bids')  # Redirect to the bids page
+            return redirect('bids') 
 
         try:
-            # Create payment with Paynow
             payment = paynow.create_payment('ecocash', 'smasonfukuzeya123@gmail.com')
             payment.add('ecocash', bid.product.price)
             response = paynow.send_mobile(payment, str(number), 'ecocash')
@@ -296,11 +351,10 @@ def payment_process(request, pk):
                 poll_url = response.poll_url
                 print(poll_url)
                 status = paynow.check_transaction_status(poll_url)
-                time.sleep(15)  # Simulate waiting for payment confirmation
+                time.sleep(15)
 
-                # Create payment record and mark product as sold
                 Payment.objects.create(
-                    auction=bid.product.slot.name,
+                    auction=bid.product.auction.name,
                     phonenumber=number,
                     item=bid.product.name,
                     amount=bid.product.price,
@@ -308,7 +362,6 @@ def payment_process(request, pk):
                 product.sold = True
                 product.save()
 
-                # Notify user of payment status
                 messages.success(request, f'Transaction {status.status}.')
                 return redirect('bids')
 
@@ -317,44 +370,127 @@ def payment_process(request, pk):
                 return redirect('bids')
 
         except Exception as e:
-            # Log the error and notify the user
             print(f"Error during payment processing: {e}")
             messages.error(request, "Something went wrong with the Paynow server. Check your transaction number.")
             return redirect('bids')
 
-    # If not a POST request, redirect to the bids page
     return redirect('bids')
 
 def remove_prebid(request, pk):
-    # Ensure the user is authenticated
     if not request.user.is_authenticated:
         messages.error(request, "You must be logged in to remove a pre-bid.")
-        return redirect('login')  # Redirect to the login page
+        return redirect('login')
 
-    # Get the pre-bid or return a 404 error if not found
     pre_bid = get_object_or_404(Pre_Bidder, pk=pk)
 
-    # Ensure the user is the owner of the pre-bid
     if pre_bid.bidder != request.user:
         messages.error(request, "You do not have permission to remove this pre-bid.")
         return redirect('bids')
 
     try:
-        # Delete the pre-bid
         pre_bid.delete()
         messages.success(request, "Your pre-bid has been successfully removed.")
     except Exception as e:
-        # Log the error and notify the user
         print(f"Error removing pre-bid: {e}")
         messages.error(request, "An error occurred while removing your pre-bid. Please try again later.")
-
-    # Redirect to the bids page
     return redirect('bids')
 
 
 
+class SellerDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    Seller Dashboard: Displays products listed by the seller.
+    """
+    model = Product
+    template_name = 'seller/dashboard.html'
+    context_object_name = 'products'
+
+    def test_func(self):
+        """
+        Ensure only sellers can access this view.
+        """
+        return self.request.user.is_seller
+
+    def get_queryset(self):
+        """
+        Filter products to only those listed by the logged-in seller.
+        """
+        return Product.objects.filter(seller=self.request.user)
 
 
+class AddProductView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """
+    Add a new product to an auction.
+    """
+    model = Product
+    template_name = 'seller/add_product.html'
+    fields = ['name', 'category', 'auction', 'image', 'description', 'condition', 'price', 'quantity']
+    success_url = reverse_lazy('seller_dashboard')
+
+    def test_func(self):
+        """
+        Ensure only sellers can access this view.
+        """
+        return self.request.user.is_seller
+
+    def form_valid(self, form):
+        """
+        Set the seller to the logged-in user before saving the product.
+        """
+        form.instance.seller = self.request.user
+        return super().form_valid(form)
 
 
+class UpdateProductView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    Update an existing product.
+    """
+    model = Product
+    template_name = 'seller/update_product.html'
+    fields = ['name', 'category', 'auction', 'image', 'description', 'condition', 'price', 'quantity']
+    success_url = reverse_lazy('seller_dashboard')
+
+    def test_func(self):
+        """
+        Ensure only the seller who listed the product can update it.
+        """
+        product = self.get_object()
+        return self.request.user.is_seller and product.seller == self.request.user
+
+
+class DeleteProductView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """
+    Delete a product.
+    """
+    model = Product
+    template_name = 'seller/delete_product.html'
+    success_url = reverse_lazy('seller_dashboard')
+
+    def test_func(self):
+        """
+        Ensure only the seller who listed the product can delete it.
+        """
+        product = self.get_object()
+        return self.request.user.is_seller and product.seller == self.request.user
+
+
+class ViewBidsView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    View bids on products listed by the seller.
+    """
+    model = AuctionBid
+    template_name = 'seller/view_bids.html'
+    context_object_name = 'bids'
+
+    def test_func(self):
+        """
+        Ensure only sellers can access this view.
+        """
+        return self.request.user.is_seller
+
+    def get_queryset(self):
+        """
+        Filter bids to only those on products listed by the logged-in seller.
+        """
+        return AuctionBid.objects.filter(product__seller=self.request.user)
 
