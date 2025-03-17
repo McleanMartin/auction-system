@@ -36,7 +36,7 @@ EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['172.104.242.254','localhost']
 
 
 # Application definition
