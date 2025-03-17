@@ -19,8 +19,8 @@
   <link href="{% static 'index.css' %}" rel="stylesheet">
 
   <!-- HTMX for Live Updates -->
-  <script src="https://unpkg.com/htmx.org@1.8.4"></script>
   <script src="{% static 'app.js' %}"></script>
+  <script src="{% static 'moment.min.js' %}"></script>
 </head>
 
 <body>
@@ -94,6 +94,7 @@
   <!-- Bootstrap 5 JS and Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="{% static 'assets/dist/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'offcanvas.js' %}"></script>
+  {% comment %} <script src="{% static 'offcanvas.js' %}"></script> {% endcomment %}
+  
 </body>
 </html>

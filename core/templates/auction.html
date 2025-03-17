@@ -3,53 +3,39 @@
 {% block main %}
 
 <script>
-  function makeTimer() {
-    var endTime = new Date("{{ auction.end_date|date:'Y-m-d H:i:s' }}");
-    endTime = Date.parse(endTime) / 1000; 
+  
+  const endTime = new Date("{{auction.end_date}}").getTime();
+  const timerElement = document.getElementById("timer");
 
-    var now = new Date();
-    now = Date.parse(now) / 1000; 
+  const timerInterval = setInterval(function(){
+    const now = new Date().getTime();
+    const timeLeft = endTime - now;
 
-    var timeLeft = endTime - now;
+    const hours = Math.floor((timeLeft % (1000*60*60*24))/(1000*60*60));
+    const minutes = Math.floor((timeLeft % (1000*60*60))/(1000*60));
+    const seconds = Math.floor((timeLeft % (100*60))/1000);
 
-    if (timeLeft <= 0) {
-      $("#timer").html(`<span class="countdown-number">Auction Ended</span>`);
-      return;
+    timerElement.textContent  = `${hours}h ${minutes}m ${seconds}s`;
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      timerElement.textContent = "Auction Ended";
     }
+  },1000);
 
-    var days = Math.floor(timeLeft / 86400);
-    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
-    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600)) / 60);
-    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
-
-    if (hours < 10) { hours = "0" + hours; }
-    if (minutes < 10) { minutes = "0" + minutes; }
-    if (seconds < 10) { seconds = "0" + seconds; }
-
-    $("#timer").html(`
-      <span class="countdown-number">${days}</span> Days 
-      <span class="countdown-number">${hours}</span> Hrs 
-      <span class="countdown-number">${minutes}</span> Min 
-      <span class="countdown-number">${seconds}</span> Sec
-    `);
-  }
-
-
-  setInterval(function() { makeTimer(); }, 1000);
-  makeTimer();
-</script>
+  
+</script> 
 
 <div class="container my-5">
   <div class="text-center mb-5">
     <h1 class="display-4 fw-bold">{{ auction.name }}</h1>
-    <div id="timer" class="countdown-timer fs-3 fw-bold text-danger mt-3">
-      Loading countdown...
+    <div id="timer" class="countdown-timer fs-2 fw-bold text-danger mt-3">
+      
     </div>
   </div>
 
   <div class="row g-4">
     {% for product in items %}
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div class="card h-100 shadow-sm">
           <div class="row g-0">
             <div class="col-md-5">
