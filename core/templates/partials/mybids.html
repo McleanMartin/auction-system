@@ -11,7 +11,7 @@
               <th>#</th>
               <th>Item Name</th>
               <th>Auction</th>
-              <th>Current Price</th>
+              <th>Price</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -23,15 +23,10 @@
                         <td>{{bid.product.name}}</td>
                         <td>{{bid.product.slot}}</td>
                         <td>${{bid.product.price}}</td>
-                        <td><a href="{% url "checkout" pk=bid.product.pk%}" class=" btn btn-success btn-sm">payment</a></td>
-                        {% if sold %}
-                        <td><button hx-post="" class="btn btn-info btn-sm">Print Reciept</button></td>
-                        {% endif %}
+                        <td><a href="{% url "checkout" pk=bid.product.pk%}" class=" btn btn-success btn-sm"> make payment</a></td>
                     </tr>
                 {% endfor %}
             {% endif %}
-            
-            
           </tbody>
         </table>
     </div>

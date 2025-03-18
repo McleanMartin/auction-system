@@ -2,9 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, RegexValidator
-from django.utils.text import slugify
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.utils import timezone
 
 
@@ -35,7 +32,6 @@ class Category(models.Model):
     Model representing product categories.
     """
     name = models.CharField(max_length=200, db_index=True, unique=True)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
     description = models.TextField(blank=True)
 
     class Meta:
@@ -46,13 +42,8 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
     def get_absolute_url(self):
-        return reverse('core:items_list_by_category', args=[self.slug])
+        return reverse('core:items_list_by_category', args=[self.pk])
 
 
 class Auction(models.Model):
@@ -67,7 +58,6 @@ class Auction(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
     start_date = models.DateTimeField(auto_now=False)
     end_date = models.DateTimeField(auto_now=False)
     description = models.TextField()
@@ -83,10 +73,8 @@ class Auction(models.Model):
     def __str__(self):
         return f'{self.name} Auction'
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('auction_detail', args=[self.pk])
 
 
 @receiver(pre_save, sender=Auction)
@@ -115,7 +103,6 @@ class Product(models.Model):
     )
 
     name = models.CharField(max_length=200, db_index=True)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name='products')
     image = models.ImageField(upload_to='auction/%Y/%m/%d', blank=True)
@@ -137,13 +124,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
     def get_absolute_url(self):
-        return reverse('core:product_detail', args=[self.slug])
+        return reverse('core:product_detail', args=[self.pk])
 
 
 class AuctionBid(models.Model):
@@ -172,40 +154,6 @@ class AuctionBid(models.Model):
         ordering = ('-created',)
 
 
-class StorageBill(models.Model):
-    """
-    Model representing storage bills for auctions.
-    """
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
-    charge = models.PositiveIntegerField(default=0)
-    days = models.PositiveIntegerField(default=0)
-    paid = models.BooleanField(default=False)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return f"Storage Bill for {self.auction.name}"
-
-
-class Delivery_Price(models.Model):
-    """
-    Model representing delivery prices between locations.
-    """
-    frm = models.CharField(max_length=50)
-    to = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    duration = models.CharField(max_length=50, blank=True, help_text="Estimated delivery duration")
-
-    class Meta:
-        verbose_name = "Delivery Price"
-        verbose_name_plural = "Delivery Prices"
-
-    def __str__(self):
-        return f"{self.frm} - {self.to} Delivery price: {self.price}"
-
-    def get_absolute_url(self):
-        return reverse("Delivery_Price_detail", kwargs={"pk": self.pk})
-
-
 class Payment(models.Model):
     """
     Model representing payment transactions.
@@ -214,6 +162,7 @@ class Payment(models.Model):
         ('credit_card', 'Credit Card'),
         ('paypal', 'PayPal'),
         ('bank_transfer', 'Bank Transfer'),
+        ('ecocash','Ecocash')
     )
 
     STATUS_CHOICES = (

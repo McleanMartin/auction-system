@@ -1,137 +1,92 @@
 {% extends "base.html" %}
 {% block main %}
-<script type="text/javascript">
-  function Open() {
-    $("#myModal").modal('show');
-  };
-</script>
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title" id="myModalLabel"><strong>Delivery Prices</strong></h4>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in routes %}
-                <tr>
-                  <td>{{item.frm}}</td>
-                  <td>{{item.to}}</td>
-                  <td>${{item.price}} USD</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-  
-<div class="fluid-container col-md-8">
-      <form class="needs-validation">
-      <div class="row g-5">
-        <div class="col-md-5 ">
-          <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div class="">
-                <img class="" width="210" height="150" src="{{product.image.url}}" alt="No Image">
-              </div>
-              <div>
-                <h6 class="label label-default"><strong>{{product.name}}</strong></h6>
-              </div>
-              <span class="text-muted">${{product.price}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <span>Total Cost (USD)</span>
-              <input hidden name="total" type="text" value="{{price}}"/>
-              <strong>${{price}}</strong>
-            </li>
-          </ul>
-         
-        </div>
-        <div class="col-md-7 ">
-          
-            <div class="row g-4">
-              <div class="col-sm-6">
-                <label for="firstName" class="form-label">First name</label>
-                <input name="firstname" type="text" class="form-control" id="firstName" placeholder="" value="" required>
-              </div>
-  
-              <div class="col-sm-6">
-                <label for="lastName" class="form-label">Last name</label>
-                <input name="lastname" type="text" class="form-control" id="lastName" placeholder="" value="" required>
-              </div>
-              
-              <div class="col-sm-12">
-                <label for="email" class="form-label">Email Address</label>
-                <input name="email" type="email" class="form-control" id="email" placeholder="you@domain.com">
-              </div>
-              <div class="col-sm-12" style="margin-top:10px;">
-                <label for="address" class="form-label">Physical Address</label>
-                <textarea name="address" type="text" class="form-control" id="address" placeholder="home address"></textarea>
-              </div>
-
-              <div class="col-sm-12" style="margin-top:10px;">
-                <input name="delivery" type="checkbox" class="form-check-input" id="same-address">
-                <label class="form-check-label" for="same-address">Home Delivery </label>
-              </div>
-
-              <div class="col-sm-12" style="margin-top:5px;">
-                <label for="route" class="form-label">Route | <a href="#" onclick="Open()">check devery prices</a></label> 
-                <select name="route" id="route" class="form-control" style="margin-bottom:10px;">
-                  {% for route in routes  %}
-                  {% if route.frm == route.to %}
-                  <option   value="{{route.price}}">{{route.to}}</option>
-                  {% else %}
-                  <option value="{{route.price}}">{{route.frm}}-{{route.to}}</option>
-                  {% endif %}
-                  {% endfor %}
-                </select>
-                
-              </div>
-  
+<div class="container-fluid col-md-8">
+    <form class="needs-validation" method="post" action="{% url 'payment_process' product.pk %}">
+        {% csrf_token %}
+        <div class="row g-5">
+            <!-- Order Summary -->
+            <div class="col-md-5">
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <img class="img-fluid" width="210" height="150" src="{{ product.image.url }}" alt="No Image">
+                        </div>
+                        <div>
+                            <h6 class="label label-default"><strong>{{ product.name }}</strong></h6>
+                        </div>
+                        <span class="text-muted">${{ product.price }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Bid Price</span>
+                        <strong>${{ product.price }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Platform Fee</span>
+                        <strong>${{ platform_fee }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tax Fee</span>
+                        <strong>${{ tax_fee }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Delivery Fee</span>
+                        <strong>${{ delivery_fee }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total Cost (USD)</span>
+                        <input hidden name="total" type="text" value="{{ total_amount }}" />
+                        <strong>${{ total_amount }}</strong>
+                    </li>
+                </ul>
             </div>
-            <hr class="my-4">
-  
-            <h4 class="mb-3">Payment Methods</h4>
-  
-            <div class="my-3">
-              <div class="col-sm-6">
-                <label for="number" class="form-label">Phone number</label>
-                <input name="phonenummber"  type="number" class="form-control" id="number" placeholder=""  required>
-              </div>
-              <div class="form-check">
-                <input name="payment" id="ecocash" name="paymentMethod" type="radio" class="form-check-input"required>
-                <label class="form-check-label" for="ecocach">Ecocash</label>
-              </div>
-              <div class="form-check">
-                <input id="onemoney" name="paymentMethod" type="radio" class="form-check-input" required>
-                <label class="form-check-label" for="onemoney">One Money</label>
-              </div>
-              <div class="form-check">
-                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
-                <label class="form-check-label" for="paypal">Credit  Card</label>
-              </div>
+
+            <!-- Customer Details -->
+            <div class="col-md-7">
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input name="firstname" type="text" class="form-control" id="firstName" placeholder="John" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input name="lastname" type="text" class="form-control" id="lastName" placeholder="Doe" required>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input name="email" type="email" class="form-control" id="email" placeholder="you@domain.com" required>
+                    </div>
+
+                    <div class="col-sm-12" style="margin-top:10px;">
+                        <label for="address" class="form-label">Physical Address</label>
+                        <textarea name="address" type="text" class="form-control" id="address" placeholder="123 Main St, City, Country" required></textarea>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Payment Methods -->
+                <h4 class="mb-3">Payment Methods</h4>
+
+                <div class="my-3">
+                    <div class="col-sm-6">
+                        <label for="number" class="form-label">Phone Number</label>
+                        <input name="phonenumber" type="number" class="form-control" id="number" placeholder="0771234567" required>
+                    </div>
+
+                    <div class="form-check">
+                        <input name="paymentMethod" id="ecocash" type="radio" class="form-check-input" value="ecocash" required>
+                        <label class="form-check-label" for="ecocash">Ecocash</label>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Submit Button -->
+                <button class="w-100 btn btn-success btn-md col-sm-12 col-xs-12" type="submit">Pay Now</button>
             </div>
-            <hr class="my-4">
-            <button class="w-100 btn btn-success btn-md col-sm-12 col-xs-12" type="submit">Paynow</button>
         </div>
-      </div>
-  </div>
-</form>
+    </form>
+</div>
 {% endblock main %}

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    Category, Auction, Product, AuctionBid, StorageBill, Delivery_Price, Payment
+    Category, Auction, Product, AuctionBid, Payment
 )
 from .models import CustomUser
 
@@ -14,7 +14,6 @@ class UserAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
-    # prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Auction)
 class AuctionAdmin(admin.ModelAdmin):
@@ -52,19 +51,6 @@ class AuctionBidAdmin(admin.ModelAdmin):
     raw_id_fields = ['bidder', 'product', 'auction']
     readonly_fields = ['created']
 
-
-@admin.register(StorageBill)
-class StorageBillAdmin(admin.ModelAdmin):
-    list_display = ['auction', 'charge', 'days']
-    search_fields = ['auction__name']
-    raw_id_fields = ['auction']
-
-
-@admin.register(Delivery_Price)
-class Delivery_PriceAdmin(admin.ModelAdmin):
-    list_display = ['frm', 'to', 'price']
-    search_fields = ['frm', 'to']
-    list_filter = ['frm', 'to']
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):

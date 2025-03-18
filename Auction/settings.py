@@ -173,9 +173,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'public','files')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-# APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 
+PAYNOW_ID = '14813'
+PAYNOW_KEY = '3e688baf-5630-4145-a99c-d5deb32e5b2e'
+PAYNOW_RETURN_URL = 'http://google.com'
+PAYNOW_RESULT_URL = 'http://172.104.242.254'
 
 
