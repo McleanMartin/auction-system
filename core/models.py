@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, RegexValidator
 from django.utils import timezone
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
@@ -75,21 +77,6 @@ class Auction(models.Model):
 
     def get_absolute_url(self):
         return reverse('auction_detail', args=[self.pk])
-
-
-@receiver(pre_save, sender=Auction)
-def update_auction_status(sender, instance, **kwargs):
-    """
-    Signal to update auction status based on start and end dates.
-    """
-    now = timezone.now()
-    if instance.start_date > now:
-        instance.status = 'upcoming'
-    elif instance.start_date <= now <= instance.end_date:
-        instance.status = 'ongoing'
-    else:
-        instance.status = 'completed'
-        instance.expired = True
 
 
 class Product(models.Model):
@@ -182,3 +169,18 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.transcation_id} - {self.amount}"
+
+
+@receiver(pre_save, sender=Auction)
+def update_auction_status(sender, instance, **kwargs):
+    """
+    Signal to update auction status based on start and end dates.
+    """
+    now = timezone.now()
+    if instance.start_date > now:
+        instance.status = 'upcoming'
+    elif instance.start_date <= now <= instance.end_date:
+        instance.status = 'ongoing'
+    else:
+        instance.status = 'completed'
+        instance.expired = True
