@@ -92,7 +92,7 @@ def my_bids(request):
     """
     Display the winning bids for the logged-in user.
     """
-    bids = get_object_or_404(AuctionBid,bidder=request.user)
+    bids = AuctionBid.objects.filter(bidder=request.user)
     return render(request, 'partials/mybids.html', {'bids': bids,})
 
     
