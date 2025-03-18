@@ -15,10 +15,10 @@ urlpatterns = [
 
     path('',v.index,name='index'),
     path('admin/', admin.site.urls),
-    path('auction/<int:pk>/',v.auction,name='auction'),
-    path('bid/<int:pk>/',v.bidder,name='bid'),
-    path('live-bids/',v.live_bids,name='live-bids'),
-    path('bids/',v.my_bids,name='bids'),
+    path('auction/<int:pk>/',v.auction_detail,name='auction'),
+    path('bid/<int:pk>/',v.place_bid,name='bid'),
+    path('live-bids/', v.live_bids, name='live-bids'),
+    path('bids/', v.my_bids, name='bids'),
     path('paynow',v.payment_process,name='paynow'),
     path('checkout/<int:pk>/',v.checkout,name='checkout'),
 

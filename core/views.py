@@ -79,6 +79,47 @@ def index(request):
     return render(request, 'index.html', {'auction_list': auctions})
 
 @login_required
+def live_bids(request):
+    """
+    Display the latest bids across all auctions.
+    """
+    # Fetch the latest 6 bids
+    all_bids = AuctionBid.objects.all().order_by('-created')[:6]
+    return render(request, 'partials/livebids.html', {'all_bids': all_bids})
+
+@login_required
+def my_bids(request):
+    """
+    Display the winning bids for the logged-in user.
+    """
+    try:
+        # Fetch winning bids for the logged-in user
+        winning_bids = AuctionBid.objects.filter(bidder=request.user, winner=True) \
+                                        .select_related('auction', 'product')
+
+        # Fetch delivery prices
+        delivery_prices = Delivery_Price.objects.all()
+
+        if not winning_bids.exists():
+            messages.info(request, "You have no winning bids at the moment.")
+            return render(request, 'partials/mybids.html', {
+                'winning_bids': [],
+                'delivery_prices': delivery_prices,
+            })
+
+        return render(request, 'partials/mybids.html', {
+            'winning_bids': winning_bids,
+            'delivery_prices': delivery_prices,
+        })
+
+    except Exception as e:
+        messages.error(request, "An error occurred while fetching your bids. Please try again later.")
+        return render(request, 'partials/mybids.html', {
+            'winning_bids': [],
+            'delivery_prices': [],
+        })
+
+@login_required
 def auction_detail(request, pk):
     """Display details of a specific auction."""
     auction = get_object_or_404(Auction, pk=pk)
