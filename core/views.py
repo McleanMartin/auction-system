@@ -92,20 +92,10 @@ def my_bids(request):
     """
     Display the winning bids for the logged-in user.
     """
-    try:
-        # Fetch winning bids for the logged-in user
-        
-        winning_bids = get_object_or_404(AuctionBid,bidder=request.user)
+    bids = get_object_or_404(AuctionBid,bidder=request.user)
+    return render(request, 'partials/mybids.html', {'bids': bids,})
 
-        return render(request, 'partials/mybids.html', {
-            'bids': bids,
-        })
-
-    except Exception as e:
-        messages.error(request, "An error occurred while fetching your bids. Please try again later.")
-        return render(request, 'partials/mybids.html', {
-            'bids': []
-        })
+    
 
 @login_required
 def auction_detail(request, pk):
