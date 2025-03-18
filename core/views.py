@@ -94,18 +94,9 @@ def my_bids(request):
     """
     try:
         # Fetch winning bids for the logged-in user
-        winning_bids = AuctionBid.objects.filter(bidder=request.user, winner=True) \
-                                        .select_related('auction', 'product')
-
+        winning_bids = AuctionBid.objects.filter(bidder=request.user) 
         # Fetch delivery prices
         delivery_prices = Delivery_Price.objects.all()
-
-        if not winning_bids.exists():
-            messages.info(request, "You have no winning bids at the moment.")
-            return render(request, 'partials/mybids.html', {
-                'winning_bids': [],
-                'delivery_prices': delivery_prices,
-            })
 
         return render(request, 'partials/mybids.html', {
             'winning_bids': winning_bids,
