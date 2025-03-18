@@ -16,8 +16,8 @@
             </tr>
           </thead>
           <tbody>
-            {% if winning_bids %}
-                {% for bid in winning_bids  %}
+            {% if bids %}
+                {% for bid in bids  %}
                     <tr>
                         <td>{{bid.product.pk}}</td>
                         <td>{{bid.product.name}}</td>

@@ -94,20 +94,17 @@ def my_bids(request):
     """
     try:
         # Fetch winning bids for the logged-in user
-        winning_bids = AuctionBid.objects.filter(bidder=request.user) 
-        # Fetch delivery prices
-        delivery_prices = Delivery_Price.objects.all()
+        
+        winning_bids = get_object_or_404(AuctionBid,bidder=request.user)
 
         return render(request, 'partials/mybids.html', {
-            'winning_bids': winning_bids,
-            'delivery_prices': delivery_prices,
+            'bids': bids,
         })
 
     except Exception as e:
         messages.error(request, "An error occurred while fetching your bids. Please try again later.")
         return render(request, 'partials/mybids.html', {
-            'winning_bids': [],
-            'delivery_prices': [],
+            'bids': []
         })
 
 @login_required
