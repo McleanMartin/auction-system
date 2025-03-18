@@ -18,6 +18,12 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
+paynow = Paynow(
+    '14813', 
+    '3e688baf-5630-4145-a99c-d5deb32e5b2e',
+    'http://google.com', 
+    'http://127.0.0.1:8000'
+    )
 
 def user_register(request):
     if request.method == 'POST':
@@ -349,25 +355,6 @@ def payment_process(request, pk):
             messages.error(request, "Something went wrong with the Paynow server. Check your transaction number.")
             return redirect('bids')
 
-    return redirect('bids')
-
-def remove_prebid(request, pk):
-    if not request.user.is_authenticated:
-        messages.error(request, "You must be logged in to remove a pre-bid.")
-        return redirect('login')
-
-    pre_bid = get_object_or_404(Pre_Bidder, pk=pk)
-
-    if pre_bid.bidder != request.user:
-        messages.error(request, "You do not have permission to remove this pre-bid.")
-        return redirect('bids')
-
-    try:
-        pre_bid.delete()
-        messages.success(request, "Your pre-bid has been successfully removed.")
-    except Exception as e:
-        print(f"Error removing pre-bid: {e}")
-        messages.error(request, "An error occurred while removing your pre-bid. Please try again later.")
     return redirect('bids')
 
 
