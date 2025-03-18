@@ -12,8 +12,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from paynow import Paynow
-from .models import Auction, Product, AuctionBid, Payment, Delivery_Price, CustomUser
-from .forms import UserRegistrationForm
+from .models import *
+from .forms import *
 from .report import generate_invoice_pdf
 
 # Paynow configuration
