@@ -2,13 +2,11 @@
 {% load static %}
 {% block main %}
 
-
-
 <div class="container my-5">
   <div class="text-center mb-5">
     <h1 class="display-4 fw-bold">{{ auction.name }}</h1>
     <div id="timer" class="countdown-timer fs-2 fw-bold text-danger mt-3">
-      
+      <!-- Timer will be updated here -->
     </div>
   </div>
 
@@ -85,27 +83,26 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 </style>
+
+<!-- Move the script block here -->
 <script>
-  
-  const endTime = new Date("{{auction.end_date}}").getTime();
+  const endTime = new Date("{{ auction.end_date }}").getTime();
   const timerElement = document.getElementById("timer");
 
-  const timerInterval = setInterval(function(){
+  const timerInterval = setInterval(function() {
     const now = new Date().getTime();
     const timeLeft = endTime - now;
 
-    const hours = Math.floor((timeLeft % (1000*60*60*24))/(1000*60*60));
-    const minutes = Math.floor((timeLeft % (1000*60*60))/(1000*60));
-    const seconds = Math.floor((timeLeft % (100*60))/1000);
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    timerElement.textContent  = `${hours}h ${minutes}m ${seconds}s`;
-    if(timeLeft <= 0){
+    timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+    if (timeLeft <= 0) {
       clearInterval(timerInterval);
       timerElement.textContent = "Auction Ended";
     }
-  },1000);
-
-  
-</script> 
+  }, 1000);
+</script>
 
 {% endblock main %}
