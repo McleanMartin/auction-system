@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
+from paynow import Paynow
 from .forms import UserRegistrationForm, EditProfileForm
 from django.views.generic import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
