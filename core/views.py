@@ -137,7 +137,7 @@ def place_bid(request, pk):
         except ValueError:
             messages.error(request, 'Invalid bid amount.')
         
-        return redirect('auction_detail', pk=product.auction.pk)
+        return redirect('auction', pk=product.auction.pk)
 
     messages.error(request, 'Invalid request method.')
     return redirect('index')
