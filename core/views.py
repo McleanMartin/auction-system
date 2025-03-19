@@ -190,10 +190,10 @@ def payment_process(request, pk):
         except Exception as e:
             messages.error(request, f'Payment error: {str(e)}')
 
-        return redirect('my_bids')
+        return redirect('bids')
 
     messages.error(request, 'Invalid request method.')
-    return redirect('my_bids')
+    return redirect('bids')
 
 @login_required
 def checkout(request, pk):
