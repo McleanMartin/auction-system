@@ -19,7 +19,7 @@ urlpatterns = [
     path('bid/<int:pk>/',v.place_bid,name='bid'),
     path('live-bids/', v.live_bids, name='live-bids'),
     path('bids/', v.my_bids, name='bids'),
-    path('paynow',v.payment_process,name='paynow'),
+    path('paynow/<int:pk>/',v.payment_process,name='paynow'),
     path('checkout/<int:pk>/',v.checkout,name='checkout'),
 
     path('register/', v.user_register, name='user_register'),
