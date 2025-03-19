@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from paynow import Paynow
 from .models import *
 from .forms import *
+from decimal import Decimal
 from .report import generate_invoice_pdf
 
 # Paynow configuration
