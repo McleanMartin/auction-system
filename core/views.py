@@ -184,7 +184,7 @@ def payment_process(request, pk):
                 generate_invoice_pdf(payment)
                 
                 messages.success(request, 'Payment initiated successfully.')
-                return redirect('my_bids')
+                return redirect('bids')
             else:
                 messages.error(request, 'Payment initiation failed.')
         except Exception as e:
