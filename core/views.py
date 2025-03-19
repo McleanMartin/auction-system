@@ -152,10 +152,6 @@ def payment_process(request, pk):
     if request.method == 'POST':
         phone_number = request.POST.get('number')
 
-        if not phone_number or not phone_number.isdigit():
-            messages.error(request, 'Invalid phone number.')
-            return redirect('my_bids')
-
         try:
             # Calculate platform fee and tax fee
             platform_fee = Decimal('5.00')
