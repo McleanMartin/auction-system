@@ -153,6 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+# Set the timezone for Zimbabwe
 TIME_ZONE = 'Africa/Harare'
 
 USE_I18N = True

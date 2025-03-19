@@ -69,10 +69,9 @@ def start():
         # Schedule the 'close' job to run every hour
         scheduler.add_job(
             close,
-            "cron",
+            "interval",
+            seconds=3,  # Run every 3 seconds
             id="close_auction",
-            hour='*',
-            minute=0,  # Run at the start of every hour
             replace_existing=True,
         )
 
