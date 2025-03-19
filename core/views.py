@@ -221,7 +221,7 @@ def checkout(request, pk):
         'total_amount': total_amount,
     }
 
-    return render(request, 'checkout.html', context)
+    return render(request, 'partials/payment.html', context)
 
 # Seller Views
 class SellerDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
