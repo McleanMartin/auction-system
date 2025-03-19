@@ -147,8 +147,7 @@ def place_bid(request, pk):
 @login_required
 def payment_process(request, pk):
     """Handle payment processing via Paynow."""
-    bid = get_object_or_404(AuctionBid, pk=pk)
-    product = bid.product
+    product = get_object_or_404(Product, pk=pk)
 
     if request.method == 'POST':
         phone_number = request.POST.get('number')
