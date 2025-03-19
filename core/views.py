@@ -150,7 +150,7 @@ def payment_process(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == 'POST':
-        phone_number = request.POST.get('number')
+        phone_number = request.POST.get('phonenumber')
 
         try:
             # Calculate platform fee and tax fee
