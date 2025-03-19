@@ -167,8 +167,6 @@ def payment_process(request, pk):
                 phonenumber=phone_number,
                 item=product.name,
                 amount=product.price,
-                platform_fee=platform_fee,
-                tax_fee=tax_fee,
                 payment_method='ecocash',
                 status='pending',
             )
