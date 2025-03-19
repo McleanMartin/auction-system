@@ -202,13 +202,13 @@ def checkout(request, pk):
     """
     Display the checkout page for a winning bid.
     """
-    winning_bid = get_object_or_404(AuctionBid, pk=pk, bidder=request.user, winner=True)
+    winning_bid = get_object_or_404(AuctionBid, pk=pk, bidder=request.user)
     product = winning_bid.product
 
     # Calculate fees
-    platform_fee = Decimal('5.00')  # Example: $5 platform fee
-    tax_fee = winning_bid.bid_price * Decimal('0.15')  # Example: 15% tax
-    delivery_fee = Decimal('10.00')  # Example: $10 delivery fee
+    platform_fee = Decimal('5.00')  
+    tax_fee = winning_bid.bid_price * Decimal('0.15')  
+    delivery_fee = Decimal('10.00') 
 
     # Calculate total amount
     total_amount = winning_bid.bid_price + platform_fee + tax_fee + delivery_fee
