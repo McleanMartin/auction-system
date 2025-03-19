@@ -169,7 +169,7 @@ def payment_process(request, pk):
 
             # Initiate Paynow payment
             paynow_payment = paynow.create_payment('ecocash', request.user.email)
-            paynow_payment.add('ecocash', payment.total_amount)
+            paynow_payment.add('ecocash', payment.amount)
             response = paynow.send_mobile(paynow_payment, phone_number, 'ecocash')
 
             if response.success:
