@@ -111,10 +111,10 @@ WSGI_APPLICATION = 'Auction.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Auction',
-        'USER': 'martin',
-        'PASSWORD': 'pa22w0rd',
-        'HOST': '172.104.242.254',
+        'NAME': 'myproject',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
         'PORT': 5432,
     }
 }
