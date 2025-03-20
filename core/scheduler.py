@@ -28,13 +28,12 @@ def close():
 
             # Find the last bidder for the auction
             last_bidder = AuctionBid.objects.filter(auction=auction).last()
-            product = Product.objects.get(pk=last_bidder.product.pk)
-
+    
             if last_bidder:
                 # Mark the last bidder as the winner
                 last_bidder.winner = True
-                product.sold = True
-                product.save()
+                last_bidder.product.sold = True
+                last_bidder.product.save()
                 last_bidder.save()
 
 

@@ -118,6 +118,17 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'Auction',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pa22w0rd',
+#         'HOST': 'localhost',
+#         'PORT': 5432,
+#     }
+# }
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
