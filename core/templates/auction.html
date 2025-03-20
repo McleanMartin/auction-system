@@ -35,7 +35,7 @@
                     <button type="submit" class="btn btn-primary">Bid Now</button>
                   </form>
                 {% else %}
-                  <button class="btn btn-secondary" disabled>Sold</button>
+                  <button class="btn btn-secondary" disabled>Product Sold</button>
                 {% endif %}
               </div>
             </div>
@@ -84,14 +84,15 @@
   }
 </style>
 
-<!-- Timer Script -->
+
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const endTime = new Date("{{ auction.end_date|date:'Y-m-d\TH:i:s' }}Z"); // Ensure UTC format
+    // Parse the end date in the correct timezone
+    const endTime = new Date("{{ end_date|date:'Y-m-d\TH:i:s' }}");
     const timerElement = document.getElementById("timer");
 
     const timerInterval = setInterval(function() {
-      const now = new Date().getTime();
+      const now = new Date();
       const timeLeft = endTime - now;
 
       const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

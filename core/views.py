@@ -19,11 +19,11 @@ from .report import generate_invoice_pdf
 
 # Paynow configuration
 paynow = Paynow(
-    settings.PAYNOW_ID,
-    settings.PAYNOW_KEY,
-    settings.PAYNOW_RETURN_URL,
-    settings.PAYNOW_RESULT_URL
-)
+    '14813', 
+    '3e688baf-5630-4145-a99c-d5deb32e5b2e',
+    'http://google.com', 
+    'http://127.0.0.1:8000'
+    )
 
 # Auth Views
 def user_register(request):
@@ -84,7 +84,6 @@ def live_bids(request):
     """
     Display the latest bids across all auctions.
     """
-    # Fetch the latest 6 bids
     all_bids = AuctionBid.objects.all().order_by('-created')[:6]
     return render(request, 'partials/livebids.html', {'all_bids': all_bids})
 
@@ -95,8 +94,6 @@ def my_bids(request):
     """
     bids = AuctionBid.objects.filter(bidder=request.user)
     return render(request, 'partials/mybids.html', {'bids': bids,})
-
-    
 
 @login_required
 def auction_detail(request, pk):
@@ -111,6 +108,7 @@ def auction_detail(request, pk):
         'auction': auction,
         'related': related,
         'status': status,
+        'end_date': timezone.localtime(auction.end_date), 
     })
 
 @login_required
@@ -143,80 +141,91 @@ def place_bid(request, pk):
     messages.error(request, 'Invalid request method.')
     return redirect('index')
 
-# Payment Views
 @login_required
 def payment_process(request, pk):
     """Handle payment processing via Paynow."""
-    product = get_object_or_404(Product, pk=pk)
-
-    if request.method == 'POST':
-        phone_number = request.POST.get('phonenumber')
-
-        try:
-            # Calculate platform fee and tax fee
-            platform_fee = Decimal('5.00')
-            tax_fee = product.price * Decimal('0.15')
-
-            # Create payment
-            payment = Payment.objects.create(
-                auction=product.auction.name,
-                phonenumber=phone_number,
-                item=product.name,
-                amount=product.price,
-                payment_method='ecocash',
-                status='pending',
-            )
-
-            # Initiate Paynow payment
-            paynow_payment = paynow.create_payment('ecocash', request.user.email)
-            paynow_payment.add('ecocash', payment.amount)
-            response = paynow.send_mobile(paynow_payment, phone_number, 'ecocash')
-
-            if response.success:
-                payment.status = 'completed'
-                payment.save()
-                product.sold = True
-                product.save()
-                generate_invoice_pdf(payment)
-                
-                messages.success(request, 'Payment initiated successfully.')
-                return redirect('bids')
-            else:
-                messages.error(request, 'Payment initiation failed.')
-        except Exception as e:
-            messages.error(request, f'Payment error: {str(e)}')
-
+    try:
+        obj = AuctionBid.objects.get(pk=pk)
+    except AuctionBid.DoesNotExist:
+        messages.error(request, 'Bid not found.')
         return redirect('bids')
 
-    messages.error(request, 'Invalid request method.')
-    return redirect('bids')
+    if request.method != 'POST':
+        messages.error(request, 'Invalid request method.')
+        return redirect('bids')
 
+    phone_number = request.POST.get('phonenumber')
+    if not phone_number:
+        messages.error(request, 'Phone number is required.')
+        return redirect('bids')
+
+    try:
+        # Calculate platform fee and tax fee
+        platform_fee = Decimal('5.00')
+        tax_fee = obj.product.price * Decimal('0.15')
+
+        # Create payment record
+        payment = Payment.objects.create(
+            auction=obj.auction.name,
+            phonenumber=phone_number,
+            item=obj.product.name,
+            amount=obj.product.price + tax_fee + platform_fee,
+            payment_method='ecocash',
+            status='pending',
+        )
+
+        payment.save()
+
+        # Initiate Paynow payment
+        paynow_payment = paynow.create_payment('Order', 'test@example.com')
+        paynow_payment.add('Payment', float(payment.amount)) 
+        response = paynow.send_mobile(paynow_payment, phone_number, 'ecocash')
+
+        if (response.success):
+            payment.status = 'completed'
+            payment.save()
+
+            obj.product.sold = True
+            obj.product.save()
+
+            # Generate invoice PDF
+            generate_invoice_pdf(payment)
+
+            messages.success(request, 'Payment initiated successfully.')
+        else:
+            messages.error(request, 'Payment initiation failed. Please try again.')
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Payment error: {str(e)}")
+        messages.error(request, f'Payment error: {str(e)}')
+
+    return redirect('bids')
 @login_required
 def checkout(request, pk):
     """
     Display the checkout page for a winning bid.
     """
-    product = get_object_or_404(Product, pk=pk)
+    auction = get_object_or_404(AuctionBid, pk=pk)
 
     # Calculate fees
     platform_fee = Decimal('5.00')  
-    tax_fee = product.price * Decimal('0.15')  
+    tax_fee = auction.product.price * Decimal('0.15')  
     delivery_fee = Decimal('10.00') 
 
     # Calculate total amount
-    total_amount = product.price + platform_fee + tax_fee + delivery_fee
+    total_amount = auction.product.price + platform_fee + tax_fee + delivery_fee
 
     context = {
-        'product': product,
+        'product': auction.product,
         'platform_fee': platform_fee,
         'tax_fee': tax_fee,
         'delivery_fee': delivery_fee,
         'total_amount': total_amount,
+        'auction':auction.pk
     }
 
     return render(request, 'partials/payment.html', context)
 
-# Seller Views
 class SellerDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     """Seller dashboard to view listed products."""
     model = Product

@@ -5,11 +5,6 @@ from .models import (
 )
 from .models import CustomUser
 
-
-@admin.register(CustomUser)
-class UserAdmin(admin.ModelAdmin):
-    pass
-
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
@@ -29,18 +24,18 @@ class AuctionAdmin(admin.ModelAdmin):
     mark_as_expired.short_description = "Mark selected auctions as expired"
 
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'auction', 'price', 'sold', 'condition']
-    list_filter = ['sold', 'condition', 'category', 'auction']
-    search_fields = ['name', 'description']
-    readonly_fields = ['created', 'updated']
-    raw_id_fields = ['category', 'auction']
-    actions = ['mark_as_sold']
+# @admin.register(Product)
+# class ProductAdmin(admin.ModelAdmin):
+#     list_display = ['name', 'category', 'auction', 'price', 'sold', 'condition']
+#     list_filter = ['sold', 'condition', 'category', 'auction']
+#     search_fields = ['name', 'description']
+#     readonly_fields = ['created', 'updated']
+#     raw_id_fields = ['category', 'auction']
+#     actions = ['mark_as_sold']
 
-    def mark_as_sold(self, request, queryset):
-        queryset.update(sold=True)
-    mark_as_sold.short_description = "Mark selected products as sold"
+#     def mark_as_sold(self, request, queryset):
+#         queryset.update(sold=True)
+#     mark_as_sold.short_description = "Mark selected products as sold"
 
 
 @admin.register(AuctionBid)

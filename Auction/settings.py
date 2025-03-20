@@ -36,7 +36,7 @@ EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 
 
-ALLOWED_HOSTS = ['172.104.242.254','localhost']
+ALLOWED_HOSTS = ['172.104.242.254','localhost','127.0.0.1']
 
 
 # Application definition
@@ -111,9 +111,9 @@ WSGI_APPLICATION = 'Auction.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myproject',
+        'NAME': 'Auction',
         'USER': 'postgres',
-        'PASSWORD': 'your_password',
+        'PASSWORD': 'pa22w0rd',
         'HOST': 'localhost',
         'PORT': 5432,
     }

@@ -1,89 +1,103 @@
 {% extends "base.html" %}
+
 {% block main %}
-<div class="container-fluid col-md-8">
-    <form class="needs-validation" method="post" action="{% url 'paynow' product.pk %}">
-        {% csrf_token %}
-        <div class="row g-5">
-            <!-- Order Summary -->
-            <div class="col-md-5">
-                <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="label label-default"><strong>{{ product.name }}</strong></h6>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Checkout</h4>
+                </div>
+                <div class="card-body">
+                    <form class="needs-validation" method="post" action="{% url 'paynow' auction %}" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <!-- Order Summary -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Order Summary</h5>
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0"><strong>{{ product.name }}</strong></h6>
+                                        </div>
+                                        <span class="text-muted">${{ product.price }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Bid Price</span>
+                                        <strong>${{ product.price }}</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Platform Fee</span>
+                                        <strong>${{ platform_fee }}</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Tax Fee</span>
+                                        <strong>${{ tax_fee }}</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                        <span>Total Cost (USD)</span>
+                                        <input hidden name="total" type="text" value="{{ total_amount }}" />
+                                        <strong>${{ total_amount }}</strong>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Customer Details -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Customer Details</h5>
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input name="firstname" type="text" class="form-control" id="firstName" placeholder="John" required>
+                                        <div class="invalid-feedback">
+                                            Please enter your first name.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input name="lastname" type="text" class="form-control" id="lastName" placeholder="Doe" required>
+                                        <div class="invalid-feedback">
+                                            Please enter your last name.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input name="email" type="email" class="form-control" id="email" placeholder="you@domain.com" required>
+                                        <div class="invalid-feedback">
+                                            Please enter a valid email address.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="number" class="form-label">Phone Number</label>
+                                        <input name="phonenumber" type="number" class="form-control" id="number" placeholder="0771234567" required>
+                                        <div class="invalid-feedback">
+                                            Please enter a valid phone number.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <!-- Payment Methods -->
+                                <h5 class="mb-3">Payment Methods</h5>
+                                <div class="form-check">
+                                    <input name="paymentMethod" id="ecocash" type="radio" class="form-check-input" value="ecocash" required>
+                                    <label class="form-check-label" for="ecocash">Ecocash</label>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <!-- Submit Button -->
+                                <button class="w-100 btn btn-primary btn-lg" type="submit">Pay Now</button>
+                            </div>
                         </div>
-                        <span class="text-muted">${{ product.price }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Bid Price</span>
-                        <strong>${{ product.price }}</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Platform Fee</span>
-                        <strong>${{ platform_fee }}</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Tax Fee</span>
-                        <strong>${{ tax_fee }}</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Delivery Fee</span>
-                        <strong>${{ delivery_fee }}</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total Cost (USD)</span>
-                        <input hidden name="total" type="text" value="{{ total_amount }}" />
-                        <strong>${{ total_amount }}</strong>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Customer Details -->
-            <div class="col-md-7">
-                <div class="row g-4">
-                    <div class="col-sm-6">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input name="firstname" type="text" class="form-control" id="firstName" placeholder="John" required>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input name="lastname" type="text" class="form-control" id="lastName" placeholder="Doe" required>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input name="email" type="email" class="form-control" id="email" placeholder="you@domain.com" required>
-                    </div>
-
-                    <div class="col-sm-12" style="margin-top:10px;">
-                        <label for="address" class="form-label">Physical Address</label>
-                        <textarea name="address" type="text" class="form-control" id="address" placeholder="123 Main St, City, Country" required></textarea>
-                    </div>
+                    </form>
                 </div>
-
-                <hr class="my-4">
-
-                <!-- Payment Methods -->
-                <h4 class="mb-3">Payment Methods</h4>
-
-                <div class="my-3">
-                    <div class="col-sm-6">
-                        <label for="number" class="form-label">Phone Number</label>
-                        <input name="phonenumber" type="number" class="form-control" id="number" placeholder="0771234567" required>
-                    </div>
-
-                    <div class="form-check">
-                        <input name="paymentMethod" id="ecocash" type="radio" class="form-check-input" value="ecocash" required>
-                        <label class="form-check-label" for="ecocash">Ecocash</label>
-                    </div>
-                </div>
-
-                <hr class="my-4">
-
-                <!-- Submit Button -->
-                <button class="w-100 btn btn-success btn-md col-sm-12 col-xs-12" type="submit">Pay Now</button>
             </div>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock main %}

@@ -21,9 +21,11 @@
                     <tr>
                         <td>{{bid.product.pk}}</td>
                         <td>{{bid.product.name}}</td>
-                        <td>{{bid.product.slot}}</td>
+                        <td>{{bid.auction.name}}</td>
                         <td>${{bid.product.price}}</td>
-                        <td><a href="{% url "checkout" pk=bid.product.pk%}" class=" btn btn-success btn-sm"> make payment</a></td>
+                        {% if bid.auction.status == 'completed' %}
+                        <td><a href="{% url "checkout" pk=bid.pk%}" class=" btn btn-success btn-sm"> make payment</a></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             {% endif %}
