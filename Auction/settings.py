@@ -114,7 +114,7 @@ DATABASES = {
         'NAME': 'Auction',
         'USER': 'martin',
         'PASSWORD': 'pa22w0rd',
-        'HOST': 'localhost',
+        'HOST': '172.104.242.254',
         'PORT': 5432,
     }
 }
